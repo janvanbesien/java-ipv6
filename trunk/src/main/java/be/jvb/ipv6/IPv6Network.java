@@ -1,5 +1,7 @@
 package be.jvb.ipv6;
 
+import static be.jvb.ipv6.IPv6NetworkHelpers.longestPrefixLength;
+
 /**
  * Immutable representation of an IPv6 network based on an address and a prefix length. An IPv6 network is also an IPv6 address range (but
  * not all ranges are valid networks).
@@ -35,10 +37,10 @@ public final class IPv6Network extends IPv6AddressRange
      */
     public IPv6Network(IPv6Address first, IPv6Address last)
     {
-        super(first.maskWithPrefixLength(IPv6NetworkHelpers.longestPrefixLength(first, last)),
-              first.maximumAddressWithPrefixLength(IPv6NetworkHelpers.longestPrefixLength(first, last)));
+        super(first.maskWithPrefixLength(longestPrefixLength(first, last)),
+              first.maximumAddressWithPrefixLength(longestPrefixLength(first, last)));
 
-        this.prefixLength = IPv6NetworkHelpers.longestPrefixLength(first, last);
+        this.prefixLength = longestPrefixLength(first, last);
         this.address = this.getFirst();
     }
 
