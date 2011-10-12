@@ -4,6 +4,13 @@ import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
+import static be.jvb.ipv6.IPv6AddressHelpers.expandShortNotation;
+import static be.jvb.ipv6.IPv6AddressHelpers.isLessThanUnsigned;
+import static be.jvb.ipv6.IPv6AddressHelpers.isZeroString;
+import static be.jvb.ipv6.IPv6AddressHelpers.mergeLongArrayIntoIPv6Address;
+import static be.jvb.ipv6.IPv6AddressHelpers.parseStringArrayIntoLongArray;
+import static java.lang.Long.numberOfTrailingZeros;
+
 /**
  * Immutable representation of an IPv6 address.
  *
@@ -35,20 +42,20 @@ public final class IPv6Address implements Comparable<IPv6Address>
         if (string == null)
             throw new IllegalArgumentException("can not parse [null]");
 
-        final String longNotation = IPv6AddressHelpers.expandShortNotation(string);
+        final String longNotation = expandShortNotation(string);
 
         final long[] longs = tryParseStringArrayIntoLongArray(string, longNotation);
 
         IPv6AddressHelpers.validateLongs(longs);
 
-        return IPv6AddressHelpers.mergeLongArrayIntoIPv6Address(longs);
+        return mergeLongArrayIntoIPv6Address(longs);
     }
 
     private static long[] tryParseStringArrayIntoLongArray(String string, String longNotation)
     {
         try
         {
-            return IPv6AddressHelpers.parseStringArrayIntoLongArray(longNotation.split(":"));
+            return parseStringArrayIntoLongArray(longNotation.split(":"));
         } catch (NumberFormatException e)
         {
             throw new IllegalArgumentException("can not parse [" + string + "]");
@@ -189,8 +196,7 @@ public final class IPv6Address implements Comparable<IPv6Address>
         boolean shortHandNotationBusy = false;
         for (int i = 0; i < strings.length; i++)
         {
-            if (!shortHandNotationUsed && i < N_SHORTS - 1 && IPv6AddressHelpers.isZeroString(strings[i]) && IPv6AddressHelpers
-                    .isZeroString(strings[i + 1]))
+            if (!shortHandNotationUsed && i < N_SHORTS - 1 && isZeroString(strings[i]) && isZeroString(strings[i + 1]))
             {
                 shortHandNotationUsed = true;
                 shortHandNotationBusy = true;
@@ -199,7 +205,7 @@ public final class IPv6Address implements Comparable<IPv6Address>
                 else
                     result.append(":");
             }
-            else if (!(IPv6AddressHelpers.isZeroString(strings[i]) && shortHandNotationBusy))
+            else if (!(isZeroString(strings[i]) && shortHandNotationBusy))
             {
                 shortHandNotationBusy = false;
                 result.append(strings[i]);
@@ -265,11 +271,11 @@ public final class IPv6Address implements Comparable<IPv6Address>
             if (this.lowBits == that.lowBits)
                 return 0;
             else
-                return IPv6AddressHelpers.isLessThanUnsigned(this.lowBits, that.lowBits) ? -1 : 1;
+                return isLessThanUnsigned(this.lowBits, that.lowBits) ? -1 : 1;
         else if (this.highBits == that.highBits)
             return 0;
         else
-            return IPv6AddressHelpers.isLessThanUnsigned(this.highBits, that.highBits) ? -1 : 1;
+            return isLessThanUnsigned(this.highBits, that.highBits) ? -1 : 1;
     }
 
     public long getHighBits()
@@ -284,7 +290,7 @@ public final class IPv6Address implements Comparable<IPv6Address>
 
     int numberOfTrailingZeroes()
     {
-        return lowBits == 0 ? Long.numberOfTrailingZeros(highBits) + 64 : Long.numberOfTrailingZeros(lowBits);
+        return lowBits == 0 ? numberOfTrailingZeros(highBits) + 64 : numberOfTrailingZeros(lowBits);
     }
 
     int numberOfTrailingOnes()
@@ -292,8 +298,8 @@ public final class IPv6Address implements Comparable<IPv6Address>
         // count trailing ones in "value" by counting the trailing zeroes in "value + 1"
         final IPv6Address plusOne = this.add(1);
         return plusOne.getLowBits() == 0 ?
-               Long.numberOfTrailingZeros(plusOne.getHighBits()) + 64 :
-               Long.numberOfTrailingZeros(plusOne.getLowBits());
+               numberOfTrailingZeros(plusOne.getHighBits()) + 64 :
+               numberOfTrailingZeros(plusOne.getLowBits());
     }
 
 }
