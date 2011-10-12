@@ -11,11 +11,6 @@
         <connection>scm:svn:https://java-ipv6.googlecode.com/svn/trunk/</connection>
     </scm>
     <dependencies>
-        <!--<dependency>-->
-        <!--<groupId>org.pcollections</groupId>-->
-        <!--<artifactId>pcollections</artifactId>-->
-        <!--<version>2.1.0</version>-->
-        <!--</dependency>-->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
