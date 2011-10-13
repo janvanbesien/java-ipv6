@@ -2,12 +2,12 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>be.jvb.ipv6</groupId>
     <artifactId>ipv6</artifactId>
-    <version>0.2-SNAPSHOT</version>
+    <version>0.2</version>
     <packaging>jar</packaging>
     <name>IPv6</name>
     <scm>
-        <url>https://java-ipv6.googlecode.com/svn/trunk</url>
-        <connection>scm:svn:https://java-ipv6.googlecode.com/svn/trunk/</connection>
+        <url>https://java-ipv6.googlecode.com/svn/tags/ipv6-0.2</url>
+        <connection>scm:svn:https://java-ipv6.googlecode.com/svn/tags/ipv6-0.2</connection>
     </scm>
     <dependencies>
         <dependency>
