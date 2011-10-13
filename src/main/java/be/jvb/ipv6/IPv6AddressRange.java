@@ -57,7 +57,7 @@ public class IPv6AddressRange implements Comparable<IPv6AddressRange>, Iterable<
      * @param address adddress to remove from the range
      * @return list of resulting ranges
      */
-    public List<? extends IPv6AddressRange> remove(IPv6Address address)
+    public List<IPv6AddressRange> remove(IPv6Address address)
     {
         if (address == null)
             throw new IllegalArgumentException("invalid address [null]");
