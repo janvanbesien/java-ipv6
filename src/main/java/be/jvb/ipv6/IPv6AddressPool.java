@@ -16,8 +16,10 @@ import java.util.TreeSet;
  *
  * @author Jan Van Besien
  */
-public final class IPv6AddressPool extends IPv6AddressRange
+public final class IPv6AddressPool
 {
+    private final IPv6AddressRange underlyingRange;
+
     private final SortedSet<IPv6AddressRange> freeRanges;
 
     private final int prefixLength;
@@ -49,7 +51,7 @@ public final class IPv6AddressPool extends IPv6AddressRange
     private IPv6AddressPool(final IPv6Address first, final IPv6Address last, final int prefixLength,
                             final SortedSet<IPv6AddressRange> freeRanges)
     {
-        super(first, last);
+        this.underlyingRange = new IPv6AddressRange(first, last);
 
         this.prefixLength = prefixLength;
         this.freeRanges = Collections.unmodifiableSortedSet(freeRanges);
@@ -299,5 +301,32 @@ public final class IPv6AddressPool extends IPv6AddressRange
 
         // nothing found
         return false;
+    }
+
+    // delegation methods
+
+    public boolean contains(IPv6Address address)
+    {
+        return underlyingRange.contains(address);
+    }
+
+    public boolean contains(IPv6AddressRange range)
+    {
+        return underlyingRange.contains(range);
+    }
+
+    public boolean overlaps(IPv6AddressRange range)
+    {
+        return underlyingRange.overlaps(range);
+    }
+
+    public IPv6Address getFirst()
+    {
+        return underlyingRange.getFirst();
+    }
+
+    public IPv6Address getLast()
+    {
+        return underlyingRange.getLast();
     }
 }
