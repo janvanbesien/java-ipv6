@@ -87,17 +87,35 @@ public final class IPv6Address implements Comparable<IPv6Address>
      * @param value value to add
      * @return new IPv6 address
      */
-    public IPv6Address add(long value)
+    public IPv6Address add(int value)
     {
         final long newLowBits = lowBits + value;
-        if ((lowBits < 0 && newLowBits >= 0) || (lowBits >= 0 && newLowBits < 0))
+
+        if (value >= 0)
         {
-            // sign changes indicate carry out -> carry out from low bits into high bits
-            return new IPv6Address(highBits + 1, newLowBits);
+            if (isLessThanUnsigned(newLowBits, lowBits))
+            {
+                // oops, we added something postive and the result is smaller -> overflow detected (carry over one bit from low to high)
+                return new IPv6Address(highBits + 1, newLowBits);
+            }
+            else
+            {
+                // no overflow
+                return new IPv6Address(highBits, newLowBits);
+            }
         }
         else
         {
-            return new IPv6Address(highBits, newLowBits);
+            if (isLessThanUnsigned(lowBits, newLowBits))
+            {
+                // oops, we added something negative and the result is bigger -> overflow detected (carry over one bit from high to low)
+                return new IPv6Address(highBits - 1, newLowBits);
+            }
+            else
+            {
+                // no overflow
+                return new IPv6Address(highBits, newLowBits);
+            }
         }
     }
 
@@ -107,17 +125,35 @@ public final class IPv6Address implements Comparable<IPv6Address>
      * @param value value to substract
      * @return new IPv6 address
      */
-    public IPv6Address subtract(long value)
+    public IPv6Address subtract(int value)
     {
         final long newLowBits = lowBits - value;
-        if ((lowBits < 0 && newLowBits >= 0) || (lowBits >= 0 && newLowBits < 0))
+
+        if (value >= 0)
         {
-            // sign changes indicate carry out -> carry out from high bits into low bits
-            return new IPv6Address(highBits - 1, newLowBits);
+            if (isLessThanUnsigned(lowBits, newLowBits))
+            {
+                // oops, we subtracted something postive and the result is bigger -> overflow detected (carry over one bit from high to low)
+                return new IPv6Address(highBits - 1, newLowBits);
+            }
+            else
+            {
+                // no overflow
+                return new IPv6Address(highBits, newLowBits);
+            }
         }
         else
         {
-            return new IPv6Address(highBits, newLowBits);
+            if (isLessThanUnsigned(newLowBits, lowBits))
+            {
+                // oops, we subtracted something negative and the result is smaller -> overflow detected (carry over one bit from low to high)
+                return new IPv6Address(highBits + 1, newLowBits);
+            }
+            else
+            {
+                // no overflow
+                return new IPv6Address(highBits, newLowBits);
+            }
         }
     }
 
