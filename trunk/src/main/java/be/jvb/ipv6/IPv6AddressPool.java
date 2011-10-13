@@ -94,7 +94,7 @@ public final class IPv6AddressPool
     }
 
     /**
-     * @return the last IP
+     * @return the last IPv6Network which was allocated or null if none was allocated yet
      */
     public IPv6Network getLastAllocated()
     {
@@ -248,7 +248,7 @@ public final class IPv6AddressPool
             }
         }
 
-        return new IPv6AddressPool(getFirst(), getLast(), prefixLength, newFreeRanges, null);
+        return new IPv6AddressPool(getFirst(), getLast(), prefixLength, newFreeRanges, getLastAllocated());
     }
 
     /**
@@ -317,7 +317,7 @@ public final class IPv6AddressPool
     }
 
     /**
-     * @return all networks (all with the same fixed prefix length) which are free in this allocatable range
+     * @return all networks (all with the same fixed prefix length) which are free in this pool
      */
     public Iterable<IPv6Network> freeNetworks()
     {
@@ -365,7 +365,7 @@ public final class IPv6AddressPool
     }
 
 //    /**
-//     * @return all networks (all with the same fixed prefix length) which are allocated in this allocatable range
+//     * @return all networks (all with the same fixed prefix length) which are allocated in this pool
 //     */
 //    public Iterable<IPv6Network> allocatedNetworks()
 //    {
