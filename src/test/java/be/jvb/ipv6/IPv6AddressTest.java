@@ -115,7 +115,8 @@ public class IPv6AddressTest
         assertEquals(fromString("::1:0:0:0"), fromString("::ffff:ffff:ffff").add(1));
         assertEquals(fromString("::1:0:0:0:0"), fromString("::ffff:ffff:ffff:ffff").add(1));
         assertEquals(fromString("::1:0:0:0:1"), fromString("::ffff:ffff:ffff:ffff").add(2));
-        assertEquals(fromString("::").add(Integer.MAX_VALUE).add(Long.MAX_VALUE), fromString("::").add(Long.MAX_VALUE).add(
+        assertEquals(fromString("::8000:0:0:0"), fromString("::7fff:ffff:ffff:ffff").add(1));
+        assertEquals(fromString("::").add(Integer.MAX_VALUE).add(Integer.MAX_VALUE), fromString("::").add(Integer.MAX_VALUE).add(
                 Integer.MAX_VALUE));
     }
 
@@ -131,18 +132,18 @@ public class IPv6AddressTest
         assertEquals(fromString("::1"), fromString("::2").subtract(1));
         assertEquals(fromString("::ffff:ffff:ffff:ffff"), fromString("::0001:0:0:0:0").subtract(1));
         assertEquals(fromString("::ffff:ffff:ffff:fffe"), fromString("::0001:0:0:0:0").subtract(2));
-        assertEquals(fromString("::").subtract(Integer.MAX_VALUE).subtract(Long.MAX_VALUE), fromString("::").subtract(
-                Long.MAX_VALUE).subtract(
-                Integer.MAX_VALUE));
+        assertEquals(fromString("::7fff:ffff:ffff:ffff"), fromString("::8000:0:0:0").subtract(1));
+        assertEquals(fromString("::").subtract(Integer.MAX_VALUE).subtract(Integer.MAX_VALUE), fromString("::").subtract(
+                Integer.MAX_VALUE).subtract(Integer.MAX_VALUE));
     }
 
     @Test
     public void subtractionVersusAdditionWithRandomAddresses()
     {
         final Random random = new Random();
-        final long randomLong = random.nextLong();
+        final int randomInt = random.nextInt();
         final IPv6Address randomAddress = new IPv6Address(random.nextLong(), random.nextLong());
-        assertEquals(randomAddress, randomAddress.add(randomLong).subtract(randomLong));
+        assertEquals(randomAddress, randomAddress.add(randomInt).subtract(randomInt));
     }
 
     @Test
@@ -152,8 +153,6 @@ public class IPv6AddressTest
         final IPv6Address randomAddress = new IPv6Address(random.nextLong(), random.nextLong());
         assertEquals(randomAddress, randomAddress.add(Integer.MAX_VALUE).subtract(Integer.MAX_VALUE));
         assertEquals(randomAddress, randomAddress.add(Integer.MIN_VALUE).subtract(Integer.MIN_VALUE));
-        assertEquals(randomAddress, randomAddress.add(Long.MAX_VALUE).subtract(Long.MAX_VALUE));
-        assertEquals(randomAddress, randomAddress.add(Long.MIN_VALUE).subtract(Long.MIN_VALUE));
     }
 
     @Test

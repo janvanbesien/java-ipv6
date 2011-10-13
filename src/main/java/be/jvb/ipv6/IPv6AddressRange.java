@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 /**
  * Immutable representation of a continuous range of IPv6 addresses (bounds included).
@@ -112,7 +113,7 @@ public class IPv6AddressRange implements Comparable<IPv6AddressRange>, Iterable<
         else if (first.equals(network.getFirst()))
             return Collections.singletonList(new IPv6AddressRange(network.getLast().add(1), last));
         else if (last.equals(network.getLast()))
-            return Collections.singletonList(new IPv6AddressRange(first, network.getLast().subtract(1)));
+            return Collections.singletonList(new IPv6AddressRange(first, network.getFirst().subtract(1)));
         else
             return Arrays.asList(new IPv6AddressRange(first, network.getFirst().subtract(1)),
                                  new IPv6AddressRange(network.getLast().add(1), last));
@@ -182,7 +183,10 @@ public class IPv6AddressRange implements Comparable<IPv6AddressRange>, Iterable<
         @Override
         public IPv6Address next()
         {
-            return current = current.add(1);
+            if (hasNext())
+                return current = current.add(1);
+            else
+                throw new NoSuchElementException();
         }
 
         @Override

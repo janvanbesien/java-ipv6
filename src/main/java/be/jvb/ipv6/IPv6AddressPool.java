@@ -3,7 +3,9 @@ package be.jvb.ipv6;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -24,6 +26,8 @@ public final class IPv6AddressPool
 
     private final int prefixLength;
 
+    private final IPv6Network lastAllocated;
+
     /**
      * Create a pool in between the given first and last address (inclusive) which is completely free. The given prefix length is the prefix
      * length used for allocating subnets from this range. The whole range should be "aligned" on a multiple of subnets of this prefix
@@ -37,11 +41,11 @@ public final class IPv6AddressPool
     public IPv6AddressPool(final IPv6Address first, final IPv6Address last, final int prefixLength)
     {
         // in the beginning, all is free
-        this(first, last, prefixLength, new TreeSet<IPv6AddressRange>(Arrays.asList(new IPv6AddressRange(first, last))));
+        this(first, last, prefixLength, new TreeSet<IPv6AddressRange>(Arrays.asList(new IPv6AddressRange(first, last))), null);
     }
 
     /**
-     * Private constructor to construct a pool with a given set of free ranges.
+     * Private constructor to construct a pool with a given set of free ranges and a network which was just allocated.
      *
      * @param first        first ip address of the range
      * @param last         last ip address of the range
@@ -49,12 +53,13 @@ public final class IPv6AddressPool
      * @param freeRanges   free ranges in the allocatable IP address range
      */
     private IPv6AddressPool(final IPv6Address first, final IPv6Address last, final int prefixLength,
-                            final SortedSet<IPv6AddressRange> freeRanges)
+                            final SortedSet<IPv6AddressRange> freeRanges, final IPv6Network lastAllocated)
     {
         this.underlyingRange = new IPv6AddressRange(first, last);
 
         this.prefixLength = prefixLength;
         this.freeRanges = Collections.unmodifiableSortedSet(freeRanges);
+        this.lastAllocated = lastAllocated;
 
         validateFreeRanges(first, last, freeRanges);
         validateRangeIsMultipleOfSubnetsOfGivenPrefixLength(first, last, prefixLength);
@@ -86,6 +91,14 @@ public final class IPv6AddressPool
             throw new IllegalArgumentException(
                     "range [" + this + "] is not aligned with prefix length [" + prefixLength + "], last address should end with " +
                     allocatableBits + " one bits");
+    }
+
+    /**
+     * @return the last IP
+     */
+    public IPv6Network getLastAllocated()
+    {
+        return lastAllocated;
     }
 
     /**
@@ -185,7 +198,7 @@ public final class IPv6AddressPool
         // and add the resulting ranges as new free ranges
         newFreeRanges.addAll(newRanges);
 
-        return new IPv6AddressPool(getFirst(), getLast(), prefixLength, newFreeRanges);
+        return new IPv6AddressPool(getFirst(), getLast(), prefixLength, newFreeRanges, toAllocate);
     }
 
     /**
@@ -235,7 +248,7 @@ public final class IPv6AddressPool
             }
         }
 
-        return new IPv6AddressPool(getFirst(), getLast(), prefixLength, newFreeRanges);
+        return new IPv6AddressPool(getFirst(), getLast(), prefixLength, newFreeRanges, null);
     }
 
     /**
@@ -303,6 +316,114 @@ public final class IPv6AddressPool
         return false;
     }
 
+    /**
+     * @return all networks (all with the same fixed prefix length) which are free in this allocatable range
+     */
+    public Iterable<IPv6Network> freeNetworks()
+    {
+        return new Iterable<IPv6Network>()
+        {
+            @Override
+            public Iterator<IPv6Network> iterator()
+            {
+                return new Iterator<IPv6Network>()
+                {
+                    /*
+                     * Iteration is implemented by allocating from a separate pool.
+                     */
+
+                    private IPv6AddressPool poolInstanceUsedForIteration = IPv6AddressPool.this;
+
+                    @Override
+                    public boolean hasNext()
+                    {
+                        return !poolInstanceUsedForIteration.isExhausted();
+                    }
+
+                    @Override
+                    public IPv6Network next()
+                    {
+                        if (hasNext())
+                        {
+                            poolInstanceUsedForIteration = poolInstanceUsedForIteration.allocate();
+                            return poolInstanceUsedForIteration.lastAllocated;
+                        }
+                        else
+                        {
+                            throw new NoSuchElementException();
+                        }
+                    }
+
+                    @Override
+                    public void remove()
+                    {
+                        throw new UnsupportedOperationException("remove not supported");
+                    }
+                };
+            }
+        };
+    }
+
+//    /**
+//     * @return all networks (all with the same fixed prefix length) which are allocated in this allocatable range
+//     */
+//    public Iterable<IPv6Network> allocatedNetworks()
+//    {
+//        return new Iterable<IPv6Network>()
+//        {
+//            @Override
+//            public Iterator<IPv6Network> iterator()
+//            {
+//                return new Iterator<IPv6Network>()
+//                {
+//                    @Override
+//                    public boolean hasNext()
+//                    {
+//                        throw new UnsupportedOperationException("TODO: implement hasNext");
+//                    }
+//
+//                    @Override
+//                    public IPv6Network next()
+//                    {
+//                        throw new UnsupportedOperationException("TODO: implement next");
+//                    }
+//
+//                    @Override
+//                    public void remove()
+//                    {
+//                        throw new UnsupportedOperationException("TODO: implement remove");
+//                    }
+//                };
+//            }
+//        };
+//    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o) return true;
+        if (!(o instanceof IPv6AddressPool)) return false;
+
+        IPv6AddressPool that = (IPv6AddressPool) o;
+
+        if (prefixLength != that.prefixLength) return false;
+        if (freeRanges != null ? !freeRanges.equals(that.freeRanges) : that.freeRanges != null) return false;
+        if (lastAllocated != null ? !lastAllocated.equals(that.lastAllocated) : that.lastAllocated != null) return false;
+        if (underlyingRange != null ? !underlyingRange.equals(that.underlyingRange) : that.underlyingRange != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        int result = underlyingRange != null ? underlyingRange.hashCode() : 0;
+        result = 31 * result + (freeRanges != null ? freeRanges.hashCode() : 0);
+        result = 31 * result + prefixLength;
+        result = 31 * result + (lastAllocated != null ? lastAllocated.hashCode() : 0);
+        return result;
+    }
+
     // delegation methods
 
     public boolean contains(IPv6Address address)
@@ -328,5 +449,11 @@ public final class IPv6AddressPool
     public IPv6Address getLast()
     {
         return underlyingRange.getLast();
+    }
+
+    @Override
+    public String toString()
+    {
+        return underlyingRange.toString();
     }
 }
