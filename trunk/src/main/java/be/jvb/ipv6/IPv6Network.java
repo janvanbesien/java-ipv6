@@ -113,4 +113,25 @@ public final class IPv6Network extends IPv6AddressRange
     {
         return prefixLength;
     }
+
+    public IPv6Address getNetmask()
+    {
+        if (prefixLength == 128)
+        {
+            return new IPv6Address(0xFFFFFFFFFFFFFFFFL, 0xFFFFFFFFFFFFFFFFL);
+        }
+        else if (prefixLength == 64)
+        {
+            return new IPv6Address(0xFFFFFFFFFFFFFFFFL, 0L);
+        }
+        else if (prefixLength > 64)
+        {
+            final int remainingPrefixLength = prefixLength - 64;
+            return new IPv6Address(0xFFFFFFFFFFFFFFFFL, (0xFFFFFFFFFFFFFFFFL << (64 - remainingPrefixLength)));
+        }
+        else
+        {
+            return new IPv6Address(0xFFFFFFFFFFFFFFFFL << (64 - prefixLength), 0);
+        }
+    }
 }

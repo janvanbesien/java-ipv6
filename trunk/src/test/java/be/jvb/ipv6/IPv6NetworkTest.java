@@ -39,4 +39,27 @@ public class IPv6NetworkTest
         }
     }
 
+    @Test
+    public void constructAndVerifyPrefixLength()
+    {
+        assertEquals(1, IPv6Network.fromString("a:b:c::/1").getPrefixLength());
+        assertEquals(63, IPv6Network.fromString("a:b:c::/63").getPrefixLength());
+        assertEquals(64, IPv6Network.fromString("a:b:c::/64").getPrefixLength());
+        assertEquals(65, IPv6Network.fromString("a:b:c::/65").getPrefixLength());
+        assertEquals(127, IPv6Network.fromString("a:b:c::/127").getPrefixLength());
+        assertEquals(128, IPv6Network.fromString("a:b:c::/128").getPrefixLength());
+    }
+
+    @Test
+    public void constructAndVerifyNetmask()
+    {
+        assertEquals(new IPv6Address(0x8000000000000000L, 0x0L), IPv6Network.fromString("a:b:c::/1").getNetmask());
+        assertEquals(new IPv6Address(0xfffffffffffffffeL, 0x0L), IPv6Network.fromString("a:b:c::/63").getNetmask());
+        assertEquals(new IPv6Address(0xffffffffffffffffL, 0x0L), IPv6Network.fromString("a:b:c::/64").getNetmask());
+        assertEquals(new IPv6Address(0xffffffffffffffffL, 0x8000000000000000L), IPv6Network.fromString("a:b:c::/65").getNetmask());
+        assertEquals(new IPv6Address(0xffffffffffffffffL, 0xfffffffffffffffeL), IPv6Network.fromString("a:b:c::/127").getNetmask());
+        assertEquals(new IPv6Address(0xffffffffffffffffL, 0xffffffffffffffffL), IPv6Network.fromString("a:b:c::/128").getNetmask());
+    }
+
+
 }
