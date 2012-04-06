@@ -24,6 +24,18 @@ public class Examples
     }
 
     @Test
+    public void ipAddressNetworkMasking()
+    {
+        final IPv6Address iPv6Address = IPv6Address.fromString("fe80::226:2dff:fefa:cd1f");
+
+        final IPv6Address masked = iPv6Address.maskWithPrefixLength(40);
+        System.out.println(masked.toString()); // prints fe80::
+
+        final IPv6Address maximum = iPv6Address.maximumAddressWithPrefixLength(40);
+        System.out.println(maximum.toString()); // prints fe80:0:ff:ffff:ffff:ffff:ffff:ffff
+    }
+
+    @Test
     public void ipAddressRangeConstruction()
     {
         final IPv6AddressRange range = new IPv6AddressRange(IPv6Address.fromString("fe80::226:2dff:fefa:cd1f"),
