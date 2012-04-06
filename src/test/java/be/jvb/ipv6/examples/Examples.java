@@ -1,8 +1,15 @@
-package be.jvb.ipv6;
+package be.jvb.ipv6.examples;
 
+import be.jvb.ipv6.IPv6Address;
+import be.jvb.ipv6.IPv6AddressPool;
+import be.jvb.ipv6.IPv6AddressRange;
+import be.jvb.ipv6.IPv6Network;
 import org.junit.Test;
 
 /**
+ * Some examples also featured in the online documentation. This class is in a separate package on purpose, such that we make sure only
+ * to call methods of the public API.
+ *
  * @author Jan Van Besien
  */
 public class Examples

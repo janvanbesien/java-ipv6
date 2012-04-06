@@ -217,4 +217,33 @@ public class IPv6AddressTest
         assertEquals(63, addressWithLowBitsEqualToLongMaxValue.numberOfTrailingOnes());
     }
 
+    @Test
+    public void numberOfLeadingOnes()
+    {
+        assertEquals(0, fromString("::").numberOfLeadingOnes());
+        assertEquals(1, fromString("8000::").numberOfLeadingOnes());
+        assertEquals(4, fromString("f000::").numberOfLeadingOnes());
+        assertEquals(4, fromString("f000::f").numberOfLeadingOnes());
+        assertEquals(65, fromString("ffff:ffff:ffff:ffff:8000::f").numberOfLeadingOnes());
+    }
+
+    @Test
+    public void numberOfTrailingZeroes()
+    {
+        assertEquals(128, fromString("::").numberOfTrailingZeroes());
+        assertEquals(127, fromString("8000::").numberOfTrailingZeroes());
+        assertEquals(124, fromString("f000::").numberOfTrailingZeroes());
+        assertEquals(0, fromString("f000::f").numberOfTrailingZeroes());
+        assertEquals(63, fromString("ffff:ffff:ffff:ffff:8000::").numberOfTrailingZeroes());
+    }
+
+    @Test
+    public void numberOfLeadingZeroes()
+    {
+        assertEquals(128, fromString("::").numberOfLeadingZeroes());
+        assertEquals(0, fromString("8000::").numberOfLeadingZeroes());
+        assertEquals(124, fromString("::f").numberOfLeadingZeroes());
+        assertEquals(63, fromString("::1:ffff:ffff:ffff:ffff").numberOfLeadingZeroes());
+    }
+    
 }

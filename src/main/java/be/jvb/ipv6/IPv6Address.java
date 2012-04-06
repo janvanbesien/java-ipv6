@@ -9,7 +9,6 @@ import static be.jvb.ipv6.IPv6AddressHelpers.isLessThanUnsigned;
 import static be.jvb.ipv6.IPv6AddressHelpers.isZeroString;
 import static be.jvb.ipv6.IPv6AddressHelpers.mergeLongArrayIntoIPv6Address;
 import static be.jvb.ipv6.IPv6AddressHelpers.parseStringArrayIntoLongArray;
-import static java.lang.Long.numberOfTrailingZeros;
 
 /**
  * Immutable representation of an IPv6 address.
@@ -221,6 +220,9 @@ public final class IPv6Address implements Comparable<IPv6Address>
         }
     }
 
+    /**
+     * @return String representation of the IPv6 Address, using shorthand notation whenever possible.
+     */
     @Override
     public String toString()
     {
@@ -324,18 +326,34 @@ public final class IPv6Address implements Comparable<IPv6Address>
         return lowBits;
     }
 
-    int numberOfTrailingZeroes()
+    public int numberOfTrailingZeroes()
     {
-        return lowBits == 0 ? numberOfTrailingZeros(highBits) + 64 : numberOfTrailingZeros(lowBits);
+        return lowBits == 0 ?
+                Long.numberOfTrailingZeros(highBits) + 64 :
+                Long.numberOfTrailingZeros(lowBits);
     }
 
-    int numberOfTrailingOnes()
+    public int numberOfTrailingOnes()
     {
         // count trailing ones in "value" by counting the trailing zeroes in "value + 1"
         final IPv6Address plusOne = this.add(1);
         return plusOne.getLowBits() == 0 ?
-               numberOfTrailingZeros(plusOne.getHighBits()) + 64 :
-               numberOfTrailingZeros(plusOne.getLowBits());
+                Long.numberOfTrailingZeros(plusOne.getHighBits()) + 64 :
+                Long.numberOfTrailingZeros(plusOne.getLowBits());
+    }
+
+    public int numberOfLeadingZeroes()
+    {
+        return highBits == 0 ?
+                Long.numberOfLeadingZeros(lowBits) + 64 :
+                Long.numberOfLeadingZeros(highBits);
+    }
+
+    public int numberOfLeadingOnes()
+    {
+        // count leading ones in "value" by counting leading zeroes in "~ value"
+        final IPv6Address flipped = new IPv6Address(~this.highBits, ~this.lowBits);
+        return flipped.numberOfLeadingZeroes();
     }
 
 }
