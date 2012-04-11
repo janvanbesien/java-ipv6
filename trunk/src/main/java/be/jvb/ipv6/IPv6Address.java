@@ -23,7 +23,7 @@ public final class IPv6Address implements Comparable<IPv6Address>
 
     private final long lowBits;
 
-    IPv6Address(long highBits, long lowBits)
+    public IPv6Address(long highBits, long lowBits)
     {
         this.highBits = highBits;
         this.lowBits = lowBits;
@@ -157,66 +157,60 @@ public final class IPv6Address implements Comparable<IPv6Address>
     }
 
     /**
-     * Mask the address with the given prefix length.
+     * Mask the address with the given network mask.
      *
-     * @param prefixLength prefix length
-     * @return an address of which the last 128 - prefixLength bits are zero
+     * @param networkMask network mask
+     * @return an address of which the last 128 - networkMask.asPrefixLength() bits are zero
      */
-    public IPv6Address maskWithPrefixLength(int prefixLength)
+    public IPv6Address maskWithNetworkMask(final IPv6NetworkMask networkMask)
     {
-        if (prefixLength <= 0 || prefixLength > 128)
-            throw new IllegalArgumentException("prefix length should be in interval ]0, 128]");
-
-        if (prefixLength == 128)
+        if (networkMask.asPrefixLength() == 128)
         {
             return this;
         }
-        else if (prefixLength == 64)
+        else if (networkMask.asPrefixLength() == 64)
         {
             return new IPv6Address(this.highBits, 0);
         }
-        else if (prefixLength > 64)
+        else if (networkMask.asPrefixLength() > 64)
         {
             // apply mask on low bits only
-            final int remainingPrefixLength = prefixLength - 64;
+            final int remainingPrefixLength = networkMask.asPrefixLength() - 64;
             return new IPv6Address(this.highBits, this.lowBits & (0xFFFFFFFFFFFFFFFFL << (64 - remainingPrefixLength)));
         }
         else
         {
             // apply mask on high bits, low bits completely 0
-            return new IPv6Address(this.highBits & (0xFFFFFFFFFFFFFFFFL << (64 - prefixLength)), 0);
+            return new IPv6Address(this.highBits & (0xFFFFFFFFFFFFFFFFL << (64 - networkMask.asPrefixLength())), 0);
         }
     }
 
     /**
-     * Calculate the maximum address with the given prefix length.
+     * Calculate the maximum address with the given network mask.
      *
-     * @param prefixLength prefix length
-     * @return an address of which the last 128 - prefixLength bits are one
+     * @param networkMask network mask
+     * @return an address of which the last 128 - networkMask.asPrefixLength() bits are one
      */
-    public IPv6Address maximumAddressWithPrefixLength(int prefixLength)
+    public IPv6Address maximumAddressWithNetworkMask(final IPv6NetworkMask networkMask)
     {
-        if (prefixLength <= 0 || prefixLength > 128)
-            throw new IllegalArgumentException("prefix length should be in interval ]0, 128]");
-
-        if (prefixLength == 128)
+        if (networkMask.asPrefixLength() == 128)
         {
             return this;
         }
-        else if (prefixLength == 64)
+        else if (networkMask.asPrefixLength() == 64)
         {
             return new IPv6Address(this.highBits, 0xFFFFFFFFFFFFFFFFL);
         }
-        else if (prefixLength > 64)
+        else if (networkMask.asPrefixLength() > 64)
         {
             // apply mask on low bits only
-            final int remainingPrefixLength = prefixLength - 64;
+            final int remainingPrefixLength = networkMask.asPrefixLength() - 64;
             return new IPv6Address(this.highBits, this.lowBits | (0xFFFFFFFFFFFFFFFFL >>> remainingPrefixLength));
         }
         else
         {
             // apply mask on high bits, low bits completely 1
-            return new IPv6Address(this.highBits | (0xFFFFFFFFFFFFFFFFL >>> prefixLength), 0xFFFFFFFFFFFFFFFFL);
+            return new IPv6Address(this.highBits | (0xFFFFFFFFFFFFFFFFL >>> networkMask.asPrefixLength()), 0xFFFFFFFFFFFFFFFFL);
         }
     }
 

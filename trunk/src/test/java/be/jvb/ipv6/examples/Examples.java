@@ -1,9 +1,6 @@
 package be.jvb.ipv6.examples;
 
-import be.jvb.ipv6.IPv6Address;
-import be.jvb.ipv6.IPv6AddressPool;
-import be.jvb.ipv6.IPv6AddressRange;
-import be.jvb.ipv6.IPv6Network;
+import be.jvb.ipv6.*;
 import org.junit.Test;
 
 /**
@@ -28,18 +25,6 @@ public class Examples
         final IPv6Address previous = iPv6Address.subtract(1);
         System.out.println(next.toString()); // prints fe80::226:2dff:fefa:cd20
         System.out.println(previous.toString()); // prints fe80::226:2dff:fefa:cd1e
-    }
-
-    @Test
-    public void ipAddressNetworkMasking()
-    {
-        final IPv6Address iPv6Address = IPv6Address.fromString("fe80::226:2dff:fefa:cd1f");
-
-        final IPv6Address masked = iPv6Address.maskWithPrefixLength(40);
-        System.out.println(masked.toString()); // prints fe80::
-
-        final IPv6Address maximum = iPv6Address.maximumAddressWithPrefixLength(40);
-        System.out.println(maximum.toString()); // prints fe80:0:ff:ffff:ffff:ffff:ffff:ffff
     }
 
     @Test
@@ -68,6 +53,31 @@ public class Examples
         System.out.println(strangeNetwork.getFirst()); // prints fe80::
         System.out.println(strangeNetwork.getLast()); // prints fe80:0:1f:ffff:ffff:ffff:ffff:ffff
         System.out.println(strangeNetwork.getNetmask()); // prints ffff:ffff:ffe0::
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void ipNetworkMaskConstruction()
+    {
+        final IPv6NetworkMask slash40Network = new IPv6NetworkMask(40);
+        System.out.println(slash40Network.asAddress()); // prints ffff:ffff:ff00::
+        System.out.println(slash40Network.asPrefixLength()); // prints 40
+
+        final IPv6NetworkMask slash40NetworkConstructedFromAddressNotation = new IPv6NetworkMask(IPv6Address.fromString("ffff:ffff:ff00::"));
+        System.out.println(slash40Network.equals(slash40NetworkConstructedFromAddressNotation)); // prints true
+
+        final IPv6NetworkMask invalidNetworkMask = new IPv6NetworkMask(IPv6Address.fromString("0fff::")); // fails
+    }
+
+    @Test
+    public void ipAddressNetworkMasking()
+    {
+        final IPv6Address iPv6Address = IPv6Address.fromString("fe80::226:2dff:fefa:cd1f");
+
+        final IPv6Address masked = iPv6Address.maskWithNetworkMask(new IPv6NetworkMask(40));
+        System.out.println(masked.toString()); // prints fe80::
+
+        final IPv6Address maximum = iPv6Address.maximumAddressWithNetworkMask(new IPv6NetworkMask(40));
+        System.out.println(maximum.toString()); // prints fe80:0:ff:ffff:ffff:ffff:ffff:ffff
     }
 
     @Test

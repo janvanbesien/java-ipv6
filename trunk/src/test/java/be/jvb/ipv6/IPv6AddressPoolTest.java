@@ -187,7 +187,8 @@ public class IPv6AddressPoolTest
             pool = pool.allocate();
             assertEquals(new IPv6Network(fromString("::"), i), pool.getLastAllocated());
             pool = pool.allocate();
-            assertEquals(new IPv6Network(fromString("::").maximumAddressWithPrefixLength(i).add(1), i), pool.getLastAllocated());
+            assertEquals(new IPv6Network(fromString("::").maximumAddressWithNetworkMask(new IPv6NetworkMask(i)).add(1), i),
+                    pool.getLastAllocated());
         }
     }
 
@@ -200,7 +201,8 @@ public class IPv6AddressPoolTest
             pool = pool.allocate();
             assertEquals(new IPv6Network(fromString("::"), i), pool.getLastAllocated());
             pool = pool.allocate();
-            assertEquals(new IPv6Network(fromString("::").maximumAddressWithPrefixLength(i).add(1), i), pool.getLastAllocated());
+            assertEquals(new IPv6Network(fromString("::").maximumAddressWithNetworkMask(new IPv6NetworkMask(i)).add(1), i),
+                    pool.getLastAllocated());
         }
     }
 

@@ -12,20 +12,37 @@ public final class IPv6Network extends IPv6AddressRange
 {
     private final IPv6Address address;
 
-    private final int prefixLength;
+    private final IPv6NetworkMask networkMask;
+
+    /**
+     * Construct from address and network mask.
+     *
+     * @param address     address
+     * @param networkMask network mask
+     */
+    public IPv6Network(IPv6Address address, IPv6NetworkMask networkMask)
+    {
+        super(address.maskWithNetworkMask(networkMask), address.maximumAddressWithNetworkMask(networkMask));
+
+        this.address = address.maskWithNetworkMask(networkMask);
+        this.networkMask = networkMask;
+    }
 
     /**
      * Construct from address and prefix length.
      *
      * @param address      address
-     * @param prefixLength prefix length, in range ]0, 128]
+     * @param prefixLength prefix length
      */
     public IPv6Network(IPv6Address address, int prefixLength)
     {
-        super(address.maskWithPrefixLength(prefixLength), address.maximumAddressWithPrefixLength(prefixLength));
+        super(address.maskWithNetworkMask(new IPv6NetworkMask(prefixLength)),
+                address.maximumAddressWithNetworkMask(new IPv6NetworkMask(prefixLength)));
 
-        this.address = address.maskWithPrefixLength(prefixLength);
-        this.prefixLength = prefixLength;
+        final IPv6NetworkMask networkMask = new IPv6NetworkMask(prefixLength);
+
+        this.address = address.maskWithNetworkMask(networkMask);
+        this.networkMask = networkMask;
     }
 
     /**
@@ -37,10 +54,10 @@ public final class IPv6Network extends IPv6AddressRange
      */
     public IPv6Network(IPv6Address first, IPv6Address last)
     {
-        super(first.maskWithPrefixLength(longestPrefixLength(first, last)),
-              first.maximumAddressWithPrefixLength(longestPrefixLength(first, last)));
+        super(first.maskWithNetworkMask(new IPv6NetworkMask(longestPrefixLength(first, last))),
+                first.maximumAddressWithNetworkMask(new IPv6NetworkMask(longestPrefixLength(first, last))));
 
-        this.prefixLength = longestPrefixLength(first, last);
+        this.networkMask = new IPv6NetworkMask(longestPrefixLength(first, last));
         this.address = this.getFirst();
     }
 
@@ -62,7 +79,7 @@ public final class IPv6Network extends IPv6AddressRange
 
         final IPv6Address networkAddress = IPv6Address.fromString(networkAddressString);
 
-        return new IPv6Network(networkAddress, prefixLength);
+        return new IPv6Network(networkAddress, new IPv6NetworkMask(prefixLength));
     }
 
     private static String parseNetworkAddress(String string)
@@ -84,7 +101,7 @@ public final class IPv6Network extends IPv6AddressRange
     @Override
     public String toString()
     {
-        return address.toString() + "/" + prefixLength;
+        return address.toString() + "/" + networkMask.asPrefixLength();
     }
 
     @Override
@@ -92,11 +109,12 @@ public final class IPv6Network extends IPv6AddressRange
     {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
 
         IPv6Network that = (IPv6Network) o;
 
-        if (prefixLength != that.prefixLength) return false;
         if (address != null ? !address.equals(that.address) : that.address != null) return false;
+        if (networkMask != null ? !networkMask.equals(that.networkMask) : that.networkMask != null) return false;
 
         return true;
     }
@@ -104,34 +122,19 @@ public final class IPv6Network extends IPv6AddressRange
     @Override
     public int hashCode()
     {
-        int result = address != null ? address.hashCode() : 0;
-        result = 31 * result + prefixLength;
+        int result = super.hashCode();
+        result = 31 * result + (address != null ? address.hashCode() : 0);
+        result = 31 * result + (networkMask != null ? networkMask.hashCode() : 0);
         return result;
     }
 
     public int getPrefixLength()
     {
-        return prefixLength;
+        return networkMask.asPrefixLength();
     }
 
-    public IPv6Address getNetmask()
+    public IPv6NetworkMask getNetmask()
     {
-        if (prefixLength == 128)
-        {
-            return new IPv6Address(0xFFFFFFFFFFFFFFFFL, 0xFFFFFFFFFFFFFFFFL);
-        }
-        else if (prefixLength == 64)
-        {
-            return new IPv6Address(0xFFFFFFFFFFFFFFFFL, 0L);
-        }
-        else if (prefixLength > 64)
-        {
-            final int remainingPrefixLength = prefixLength - 64;
-            return new IPv6Address(0xFFFFFFFFFFFFFFFFL, (0xFFFFFFFFFFFFFFFFL << (64 - remainingPrefixLength)));
-        }
-        else
-        {
-            return new IPv6Address(0xFFFFFFFFFFFFFFFFL << (64 - prefixLength), 0);
-        }
+        return networkMask;
     }
 }
