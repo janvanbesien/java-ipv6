@@ -6,10 +6,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static be.jvb.ipv6.IPv6Address.fromString;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * @author Jan Van Besien

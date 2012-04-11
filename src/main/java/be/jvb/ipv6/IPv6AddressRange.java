@@ -1,10 +1,6 @@
 package be.jvb.ipv6;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 /**
  * Immutable representation of a continuous range of IPv6 addresses (bounds included).
