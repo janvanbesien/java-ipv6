@@ -1,0 +1,4 @@
+HOWTO make a release:
+
+- mvn release:prepare in trunk
+- 
