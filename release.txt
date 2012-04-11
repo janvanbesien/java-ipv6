@@ -8,3 +8,5 @@ HOWTO make a release:
 - find -name '*.html' -exec svn propset svn:mime-type text/html {} \;
 - svn commit
 - mvn release:clean in trunk
+- update documentation
+- provide new download on google code
