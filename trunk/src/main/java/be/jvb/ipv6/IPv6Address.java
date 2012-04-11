@@ -4,11 +4,7 @@ import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-import static be.jvb.ipv6.IPv6AddressHelpers.expandShortNotation;
-import static be.jvb.ipv6.IPv6AddressHelpers.isLessThanUnsigned;
-import static be.jvb.ipv6.IPv6AddressHelpers.isZeroString;
-import static be.jvb.ipv6.IPv6AddressHelpers.mergeLongArrayIntoIPv6Address;
-import static be.jvb.ipv6.IPv6AddressHelpers.parseStringArrayIntoLongArray;
+import static be.jvb.ipv6.IPv6AddressHelpers.*;
 
 /**
  * Immutable representation of an IPv6 address.
