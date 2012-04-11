@@ -1,4 +1,8 @@
 HOWTO make a release:
 
 - mvn release:prepare in trunk
-- 
+- mvn release:perform in trunk (will fail)
+- mkdir -p artifacts/<version>/doc/
+- cp -r trunk/target/checkout/target/apidocs artifacts/<version>/doc/
+- svn add artifacts/<version>
+- mvn release:clean in trunk
