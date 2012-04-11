@@ -17,10 +17,10 @@ public class IPv6NetworkHelpers
         return countLeadingSimilarBits(firstBits, lastBits);
     }
 
-    private static int countLeadingSimilarBits(BitSet firstBits, BitSet lastBits)
+    private static int countLeadingSimilarBits(BitSet a, BitSet b)
     {
         int result = 0;
-        for (int i = 127; i >= 0 && (firstBits.get(i) == lastBits.get(i)); i--)
+        for (int i = 127; i >= 0 && (a.get(i) == b.get(i)); i--)
         {
             result++;
         }
