@@ -115,6 +115,6 @@ public final class IPv6NetworkMask
     @Override
     public String toString()
     {
-        return asAddress().toString();
+        return "" + prefixLength;
     }
 }

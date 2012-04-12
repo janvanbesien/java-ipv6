@@ -129,8 +129,8 @@ public final class IPv6AddressPool
             throw new IllegalArgumentException(
                     "can not allocate network which is not contained in the pool to allocate from [" + toAllocate + "]");
 
-        if (toAllocate.getPrefixLength() != this.prefixLength)
-            throw new IllegalArgumentException("can not allocate network with prefix length /" + toAllocate.getPrefixLength() +
+        if (toAllocate.getNetmask().asPrefixLength() != this.prefixLength)
+            throw new IllegalArgumentException("can not allocate network with prefix length /" + toAllocate.getNetmask().asPrefixLength() +
                                                " from a pool configured to hand out subnets with prefix length /" + prefixLength);
 
         // go find the range that contains the requested subnet
@@ -292,9 +292,9 @@ public final class IPv6AddressPool
         if (network == null)
             throw new IllegalArgumentException("network invalid [null]");
 
-        if (network.getPrefixLength() != prefixLength)
+        if (network.getNetmask().asPrefixLength() != prefixLength)
             throw new IllegalArgumentException(
-                    "network of prefix length [" + network.getPrefixLength() + "] can not be free in a pool which uses prefix length [" +
+                    "network of prefix length [" + network.getNetmask().asPrefixLength() + "] can not be free in a pool which uses prefix length [" +
                     prefixLength + "]");
 
         // find a free range that contains the network
@@ -450,4 +450,13 @@ public final class IPv6AddressPool
     {
         return underlyingRange.toString();
     }
+
+    /**
+     * @return like <code>toString</code> but without using shorthand notations for addresses
+     */
+    public String toLongString()
+    {
+        return underlyingRange.toLongString();
+    }
+
 }

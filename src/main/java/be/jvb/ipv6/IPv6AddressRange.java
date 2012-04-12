@@ -122,6 +122,14 @@ public class IPv6AddressRange implements Comparable<IPv6AddressRange>, Iterable<
         return first.toString() + " - " + last.toString();
     }
 
+    /**
+     * @return like <code>toString</code> but without using shorthand notations for addresses
+     */
+    public String toLongString()
+    {
+        return first.toLongString() + " - " + last.toLongString();
+    }
+
     @Override
     public int compareTo(IPv6AddressRange that)
     {

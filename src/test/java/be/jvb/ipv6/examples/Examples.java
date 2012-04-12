@@ -49,10 +49,10 @@ public class Examples
     {
         final IPv6Network strangeNetwork = IPv6Network.fromString("fe80::226:2dff:fefa:cd1f/43");
 
-        System.out.println(strangeNetwork.getPrefixLength()); // prints 43
         System.out.println(strangeNetwork.getFirst()); // prints fe80::
         System.out.println(strangeNetwork.getLast()); // prints fe80:0:1f:ffff:ffff:ffff:ffff:ffff
-        System.out.println(strangeNetwork.getNetmask()); // prints ffff:ffff:ffe0::
+        System.out.println(strangeNetwork.getNetmask().asPrefixLength()); // prints 43
+        System.out.println(strangeNetwork.getNetmask().asAddress()); // prints ffff:ffff:ffe0::
     }
 
     @Test(expected = IllegalArgumentException.class)
