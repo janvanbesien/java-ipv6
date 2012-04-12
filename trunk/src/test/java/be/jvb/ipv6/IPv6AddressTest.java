@@ -51,6 +51,17 @@ public class IPv6AddressTest
         assertEquals("2001:db8:85a3::8a2e:370:7334", fromString("2001:db8:85a3::8a2e:370:7334").toString());
     }
 
+    @Test
+    public void toLongStringOnSomeRealAddresses()
+    {
+        assertEquals("0000:0000:0000:0000:0000:0000:0000:0001", fromString("::1").toLongString());
+        assertEquals("0000:0000:0000:0000:0000:0000:0001:0000", fromString("::1:0").toLongString());
+        assertEquals("0001:0000:0000:0000:0001:0000:0000:0000", fromString("1::1:0:0:0").toLongString());
+        assertEquals("0000:0000:0000:0000:0000:0000:0000:ffff", fromString("::ffff").toLongString());
+        assertEquals("ffff:0000:0000:0000:0000:0000:0000:0000", fromString("ffff::").toLongString());
+        assertEquals("2001:0db8:85a3:0000:0000:8a2e:0370:7334", fromString("2001:db8:85a3::8a2e:370:7334").toLongString());
+    }
+
     @Test(expected = IllegalArgumentException.class)
     public void parseInvalid_1()
     {
