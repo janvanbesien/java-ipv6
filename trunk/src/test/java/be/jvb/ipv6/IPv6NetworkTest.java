@@ -42,12 +42,12 @@ public class IPv6NetworkTest
     @Test
     public void constructAndVerifyPrefixLength()
     {
-        assertEquals(1, IPv6Network.fromString("a:b:c::/1").getPrefixLength());
-        assertEquals(63, IPv6Network.fromString("a:b:c::/63").getPrefixLength());
-        assertEquals(64, IPv6Network.fromString("a:b:c::/64").getPrefixLength());
-        assertEquals(65, IPv6Network.fromString("a:b:c::/65").getPrefixLength());
-        assertEquals(127, IPv6Network.fromString("a:b:c::/127").getPrefixLength());
-        assertEquals(128, IPv6Network.fromString("a:b:c::/128").getPrefixLength());
+        assertEquals(1, IPv6Network.fromString("a:b:c::/1").getNetmask().asPrefixLength());
+        assertEquals(63, IPv6Network.fromString("a:b:c::/63").getNetmask().asPrefixLength());
+        assertEquals(64, IPv6Network.fromString("a:b:c::/64").getNetmask().asPrefixLength());
+        assertEquals(65, IPv6Network.fromString("a:b:c::/65").getNetmask().asPrefixLength());
+        assertEquals(127, IPv6Network.fromString("a:b:c::/127").getNetmask().asPrefixLength());
+        assertEquals(128, IPv6Network.fromString("a:b:c::/128").getNetmask().asPrefixLength());
     }
 
     @Test

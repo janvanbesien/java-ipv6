@@ -104,7 +104,15 @@ public final class IPv6Network extends IPv6AddressRange
         return address.toString() + "/" + networkMask.asPrefixLength();
     }
 
-    @Override
+    /**
+     * @return like <code>toString</code> but without using shorthand notations for addresses
+     */
+    public String toLongString()
+    {
+        return address.toLongString() + "/" + networkMask.asPrefixLength();
+    }
+
+        @Override
     public boolean equals(Object o)
     {
         if (this == o) return true;
@@ -126,11 +134,6 @@ public final class IPv6Network extends IPv6AddressRange
         result = 31 * result + (address != null ? address.hashCode() : 0);
         result = 31 * result + (networkMask != null ? networkMask.hashCode() : 0);
         return result;
-    }
-
-    public int getPrefixLength()
-    {
-        return networkMask.asPrefixLength();
     }
 
     public IPv6NetworkMask getNetmask()
