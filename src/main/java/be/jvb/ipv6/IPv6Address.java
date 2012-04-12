@@ -211,12 +211,12 @@ public final class IPv6Address implements Comparable<IPv6Address>
     }
 
     /**
-     * @return String representation of the IPv6 Address, using shorthand notation whenever possible.
+     * @return String representation of the IPv6 address, using shorthand notation whenever possible.
      */
     @Override
     public String toString()
     {
-        final String[] strings = toStringArray();
+        final String[] strings = toArrayOfShortStrings();
 
         final StringBuilder result = new StringBuilder();
 
@@ -245,13 +245,41 @@ public final class IPv6Address implements Comparable<IPv6Address>
         return result.toString().toLowerCase();
     }
 
-    private String[] toStringArray()
+    private String[] toArrayOfShortStrings()
     {
         final short[] shorts = toShortArray();
         final String[] strings = new String[shorts.length];
         for (int i = 0; i < shorts.length; i++)
         {
-            strings[i] = String.format("%X", shorts[i]);
+            strings[i] = String.format("%x", shorts[i]);
+        }
+        return strings;
+    }
+
+    /**
+     * @return String representation of the IPv6 address, never using shorthand notation.
+     */
+    public String toLongString()
+    {
+        final String[] strings = toArrayOfZeroPaddedstrings();
+        final StringBuilder result = new StringBuilder();
+        for (int i = 0; i < strings.length - 1; i++)
+        {
+            result.append(strings[i]).append(":");
+        }
+
+        result.append(strings[strings.length - 1]);
+
+        return result.toString();
+    }
+
+    private String[] toArrayOfZeroPaddedstrings()
+    {
+        final short[] shorts = toShortArray();
+        final String[] strings = new String[shorts.length];
+        for (int i = 0; i < shorts.length; i++)
+        {
+            strings[i] = String.format("%04x", shorts[i]);
         }
         return strings;
     }
