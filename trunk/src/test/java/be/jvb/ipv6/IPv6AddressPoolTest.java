@@ -16,13 +16,13 @@ public class IPv6AddressPoolTest
     @Test(expected = IllegalArgumentException.class)
     public void constructUnalignedStart()
     {
-        new IPv6AddressPool(fromString("2001::1"), fromString("2001::ffff:ffff"), 120);
+        new IPv6AddressPool(fromString("2001::1"), fromString("2001::ffff:ffff"), new IPv6NetworkMask(120));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void constructUnalignedEnd()
     {
-        new IPv6AddressPool(fromString("2001::0"), fromString("2001::ffff:fffe"), 120);
+        new IPv6AddressPool(fromString("2001::0"), fromString("2001::ffff:fffe"), new IPv6NetworkMask(120));
     }
 
     @Test
@@ -30,17 +30,17 @@ public class IPv6AddressPoolTest
     {
         // all these are correctly aligned with the given prefix length, so none should throw exception
 
-        new IPv6AddressPool(fromString("2001::0"), fromString("2001::ffff:ffff"), 120);
-        new IPv6AddressPool(fromString("2001::ab00"), fromString("2001::ffff:ffff"), 120);
-        new IPv6AddressPool(fromString("2000:ffff:ffff:ffff:ffff:ffff:ffff:ff00"), fromString("2001::ffff:ffff"), 120);
-        new IPv6AddressPool(fromString("2001::0"), fromString("2001::ffff:ffff"), 120);
-        new IPv6AddressPool(fromString("2001::abcd:ef00"), fromString("2001::abcd:efff"), 120);
+        new IPv6AddressPool(fromString("2001::0"), fromString("2001::ffff:ffff"), new IPv6NetworkMask(120));
+        new IPv6AddressPool(fromString("2001::ab00"), fromString("2001::ffff:ffff"), new IPv6NetworkMask(120));
+        new IPv6AddressPool(fromString("2000:ffff:ffff:ffff:ffff:ffff:ffff:ff00"), fromString("2001::ffff:ffff"), new IPv6NetworkMask(120));
+        new IPv6AddressPool(fromString("2001::0"), fromString("2001::ffff:ffff"), new IPv6NetworkMask(120));
+        new IPv6AddressPool(fromString("2001::abcd:ef00"), fromString("2001::abcd:efff"), new IPv6NetworkMask(120));
     }
 
     @Test
     public void autoAllocateAndDeallocateSingle128()
     {
-        IPv6AddressPool pool = new IPv6AddressPool(fromString("::1"), fromString("::1"), 128);
+        IPv6AddressPool pool = new IPv6AddressPool(fromString("::1"), fromString("::1"), new IPv6NetworkMask(128));
         assertFalse(pool.isExhausted());
 
         pool = pool.allocate();
@@ -59,7 +59,7 @@ public class IPv6AddressPoolTest
     @Test
     public void autoAllocateMultiple128()
     {
-        IPv6AddressPool pool = new IPv6AddressPool(fromString("::1"), fromString("::5"), 128);
+        IPv6AddressPool pool = new IPv6AddressPool(fromString("::1"), fromString("::5"), new IPv6NetworkMask(128));
         assertFalse(pool.isExhausted());
 
         for (int i = 1; i <= 5; i++)
@@ -74,7 +74,7 @@ public class IPv6AddressPoolTest
     @Test
     public void autoAllocateAFew120s()
     {
-        IPv6AddressPool pool = new IPv6AddressPool(fromString("2001::"), fromString("2001::ffff:ffff"), 120);
+        IPv6AddressPool pool = new IPv6AddressPool(fromString("2001::"), fromString("2001::ffff:ffff"), new IPv6NetworkMask(120));
         assertFalse(pool.isExhausted());
 
         pool = pool.allocate();
@@ -107,7 +107,7 @@ public class IPv6AddressPoolTest
     @Test
     public void manuallyAllocateSingle128Available()
     {
-        IPv6AddressPool pool = new IPv6AddressPool(fromString("::1"), fromString("::1"), 128);
+        IPv6AddressPool pool = new IPv6AddressPool(fromString("::1"), fromString("::1"), new IPv6NetworkMask(128));
         assertFalse(pool.isExhausted());
 
         pool = pool.allocate(new IPv6Network(fromString("::1"), 128));
@@ -121,7 +121,7 @@ public class IPv6AddressPoolTest
     @Test(expected = IllegalArgumentException.class)
     public void manuallyAllocateSingle128OutOfRange()
     {
-        final IPv6AddressPool pool = new IPv6AddressPool(fromString("::1"), fromString("::1"), 128);
+        final IPv6AddressPool pool = new IPv6AddressPool(fromString("::1"), fromString("::1"), new IPv6NetworkMask(128));
         assertFalse(pool.isExhausted());
 
         pool.allocate(new IPv6Network(fromString("::99"), 128));
@@ -130,7 +130,7 @@ public class IPv6AddressPoolTest
     @Test
     public void manuallyAllocateMultiple128()
     {
-        IPv6AddressPool pool = new IPv6AddressPool(fromString("::1"), fromString("::5"), 128);
+        IPv6AddressPool pool = new IPv6AddressPool(fromString("::1"), fromString("::5"), new IPv6NetworkMask(128));
         assertFalse(pool.isExhausted());
 
         for (int i = 1; i <= 5; i++)
@@ -145,7 +145,7 @@ public class IPv6AddressPoolTest
     @Test
     public void manuallyAllocateAFew120s()
     {
-        IPv6AddressPool pool = new IPv6AddressPool(fromString("2001::"), fromString("2001::ffff:ffff"), 120);
+        IPv6AddressPool pool = new IPv6AddressPool(fromString("2001::"), fromString("2001::ffff:ffff"), new IPv6NetworkMask(120));
         assertFalse(pool.isExhausted());
 
         pool = pool.allocate(new IPv6Network(fromString("2001::"), 120));
@@ -180,7 +180,8 @@ public class IPv6AddressPoolTest
     {
         for (int i = 64; i > 0; i--)
         {
-            IPv6AddressPool pool = new IPv6AddressPool(fromString("::"), fromString("ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff"), i);
+            IPv6AddressPool pool = new IPv6AddressPool(fromString("::"), fromString("ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff"),
+                    new IPv6NetworkMask(i));
             pool = pool.allocate();
             assertEquals(new IPv6Network(fromString("::"), i), pool.getLastAllocated());
             pool = pool.allocate();
@@ -194,7 +195,7 @@ public class IPv6AddressPoolTest
     {
         for (int i = 128; i > 64; i--)
         {
-            IPv6AddressPool pool = new IPv6AddressPool(fromString("::"), fromString("::ffff:ffff:ffff:ffff"), i);
+            IPv6AddressPool pool = new IPv6AddressPool(fromString("::"), fromString("::ffff:ffff:ffff:ffff"), new IPv6NetworkMask(i));
             pool = pool.allocate();
             assertEquals(new IPv6Network(fromString("::"), i), pool.getLastAllocated());
             pool = pool.allocate();
@@ -206,7 +207,7 @@ public class IPv6AddressPoolTest
     @Test
     public void iterateFreeNetworks()
     {
-        final IPv6AddressPool pool = new IPv6AddressPool(fromString("::"), fromString("::ffff:ffff:ffff:ffff"), 66);
+        final IPv6AddressPool pool = new IPv6AddressPool(fromString("::"), fromString("::ffff:ffff:ffff:ffff"), new IPv6NetworkMask(66));
         final Set<IPv6Network> freeNetworks = new HashSet<IPv6Network>();
         for (IPv6Network network : pool.freeNetworks())
         {

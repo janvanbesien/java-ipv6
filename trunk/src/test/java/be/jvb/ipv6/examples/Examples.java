@@ -84,7 +84,7 @@ public class Examples
     public void poolExample()
     {
         final IPv6AddressPool pool = new IPv6AddressPool(IPv6Address.fromString("fe80::226:2dff:fefa:0"),
-                                                         IPv6Address.fromString("fe80::226:2dff:fefa:ffff"), 120);
+                                                         IPv6Address.fromString("fe80::226:2dff:fefa:ffff"), new IPv6NetworkMask(120));
         System.out.println(pool.isFree(IPv6Network.fromString("fe80::226:2dff:fefa:5ff/120"))); // prints true
         final IPv6AddressPool newPool = pool.allocate(IPv6Network.fromString("fe80::226:2dff:fefa:5ff/120"));
         System.out.println(newPool.isFree(IPv6Network.fromString("fe80::226:2dff:fefa:5ff/120"))); // prints false
