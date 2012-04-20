@@ -1,4 +1,4 @@
-package be.jvb.ipv6;
+package com.googlecode.ipv6;
 
 import java.util.*;
 

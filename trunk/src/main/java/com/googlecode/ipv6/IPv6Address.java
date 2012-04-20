@@ -1,10 +1,8 @@
-package be.jvb.ipv6;
+package com.googlecode.ipv6;
 
 import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-
-import static be.jvb.ipv6.IPv6AddressHelpers.*;
 
 /**
  * Immutable representation of an IPv6 address.
@@ -37,20 +35,20 @@ public final class IPv6Address implements Comparable<IPv6Address>
         if (string == null)
             throw new IllegalArgumentException("can not parse [null]");
 
-        final String longNotation = expandShortNotation(string);
+        final String longNotation = IPv6AddressHelpers.expandShortNotation(string);
 
         final long[] longs = tryParseStringArrayIntoLongArray(string, longNotation);
 
         IPv6AddressHelpers.validateLongs(longs);
 
-        return mergeLongArrayIntoIPv6Address(longs);
+        return IPv6AddressHelpers.mergeLongArrayIntoIPv6Address(longs);
     }
 
     private static long[] tryParseStringArrayIntoLongArray(String string, String longNotation)
     {
         try
         {
-            return parseStringArrayIntoLongArray(longNotation.split(":"));
+            return IPv6AddressHelpers.parseStringArrayIntoLongArray(longNotation.split(":"));
         } catch (NumberFormatException e)
         {
             throw new IllegalArgumentException("can not parse [" + string + "]");
@@ -88,7 +86,7 @@ public final class IPv6Address implements Comparable<IPv6Address>
 
         if (value >= 0)
         {
-            if (isLessThanUnsigned(newLowBits, lowBits))
+            if (IPv6AddressHelpers.isLessThanUnsigned(newLowBits, lowBits))
             {
                 // oops, we added something postive and the result is smaller -> overflow detected (carry over one bit from low to high)
                 return new IPv6Address(highBits + 1, newLowBits);
@@ -101,7 +99,7 @@ public final class IPv6Address implements Comparable<IPv6Address>
         }
         else
         {
-            if (isLessThanUnsigned(lowBits, newLowBits))
+            if (IPv6AddressHelpers.isLessThanUnsigned(lowBits, newLowBits))
             {
                 // oops, we added something negative and the result is bigger -> overflow detected (carry over one bit from high to low)
                 return new IPv6Address(highBits - 1, newLowBits);
@@ -126,7 +124,7 @@ public final class IPv6Address implements Comparable<IPv6Address>
 
         if (value >= 0)
         {
-            if (isLessThanUnsigned(lowBits, newLowBits))
+            if (IPv6AddressHelpers.isLessThanUnsigned(lowBits, newLowBits))
             {
                 // oops, we subtracted something postive and the result is bigger -> overflow detected (carry over one bit from high to low)
                 return new IPv6Address(highBits - 1, newLowBits);
@@ -139,7 +137,7 @@ public final class IPv6Address implements Comparable<IPv6Address>
         }
         else
         {
-            if (isLessThanUnsigned(newLowBits, lowBits))
+            if (IPv6AddressHelpers.isLessThanUnsigned(newLowBits, lowBits))
             {
                 // oops, we subtracted something negative and the result is smaller -> overflow detected (carry over one bit from low to high)
                 return new IPv6Address(highBits + 1, newLowBits);
@@ -224,7 +222,8 @@ public final class IPv6Address implements Comparable<IPv6Address>
         boolean shortHandNotationBusy = false;
         for (int i = 0; i < strings.length; i++)
         {
-            if (!shortHandNotationUsed && i < N_SHORTS - 1 && isZeroString(strings[i]) && isZeroString(strings[i + 1]))
+            if (!shortHandNotationUsed && i < N_SHORTS - 1 && IPv6AddressHelpers.isZeroString(strings[i]) && IPv6AddressHelpers
+                    .isZeroString(strings[i + 1]))
             {
                 shortHandNotationUsed = true;
                 shortHandNotationBusy = true;
@@ -233,7 +232,7 @@ public final class IPv6Address implements Comparable<IPv6Address>
                 else
                     result.append(":");
             }
-            else if (!(isZeroString(strings[i]) && shortHandNotationBusy))
+            else if (!(IPv6AddressHelpers.isZeroString(strings[i]) && shortHandNotationBusy))
             {
                 shortHandNotationBusy = false;
                 result.append(strings[i]);
@@ -327,11 +326,11 @@ public final class IPv6Address implements Comparable<IPv6Address>
             if (this.lowBits == that.lowBits)
                 return 0;
             else
-                return isLessThanUnsigned(this.lowBits, that.lowBits) ? -1 : 1;
+                return IPv6AddressHelpers.isLessThanUnsigned(this.lowBits, that.lowBits) ? -1 : 1;
         else if (this.highBits == that.highBits)
             return 0;
         else
-            return isLessThanUnsigned(this.highBits, that.highBits) ? -1 : 1;
+            return IPv6AddressHelpers.isLessThanUnsigned(this.highBits, that.highBits) ? -1 : 1;
     }
 
     public long getHighBits()

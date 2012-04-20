@@ -1,8 +1,9 @@
-package be.jvb.ipv6;
+package com.googlecode.ipv6;
 
+import com.googlecode.ipv6.IPv6NetworkHelpers;
 import org.junit.Test;
 
-import static be.jvb.ipv6.IPv6Address.fromString;
+import static com.googlecode.ipv6.IPv6Address.fromString;
 import static junit.framework.Assert.assertEquals;
 
 /**

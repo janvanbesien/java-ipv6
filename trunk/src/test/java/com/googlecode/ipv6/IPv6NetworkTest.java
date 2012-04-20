@@ -1,10 +1,13 @@
-package be.jvb.ipv6;
+package com.googlecode.ipv6;
 
+import com.googlecode.ipv6.IPv6Address;
+import com.googlecode.ipv6.IPv6Network;
+import com.googlecode.ipv6.IPv6NetworkMask;
 import org.junit.Test;
 
 import java.util.Random;
 
-import static be.jvb.ipv6.IPv6Address.fromString;
+import static com.googlecode.ipv6.IPv6Address.fromString;
 import static org.junit.Assert.assertEquals;
 
 /**

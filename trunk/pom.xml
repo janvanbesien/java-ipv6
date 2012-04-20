@@ -1,14 +1,34 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>be.jvb.ipv6</groupId>
+
+    <parent>
+        <groupId>org.sonatype.oss</groupId>
+        <artifactId>oss-parent</artifactId>
+        <version>5</version>
+    </parent>
+
+    <groupId>com.googlecode.ipv6</groupId>
     <artifactId>ipv6</artifactId>
     <version>0.5-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>IPv6</name>
+    <url>http://code.google.com/p/java-ipv6</url>
+
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
     <scm>
         <url>https://java-ipv6.googlecode.com/svn/trunk</url>
         <connection>scm:svn:https://java-ipv6.googlecode.com/svn/trunk/</connection>
+        <developerConnection>scm:svn:https://java-ipv6.googlecode.com/svn/trunk/</developerConnection>
     </scm>
+
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
@@ -17,6 +37,7 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
     <build>
         <pluginManagement>
             <plugins>
@@ -42,7 +63,54 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>2.8</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>sonatype-oss-release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>buildnumber-maven-plugin</artifactId>
+                        <version>1.0-beta-4</version>
+                        <executions>
+                            <execution>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>create</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <doCheck>true</doCheck>
+                            <doUpdate>true</doUpdate>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

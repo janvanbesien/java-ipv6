@@ -1,6 +1,6 @@
-package be.jvb.ipv6.examples;
+package com.googlecode.ipv6.examples;
 
-import be.jvb.ipv6.*;
+import com.googlecode.ipv6.*;
 import org.junit.Test;
 
 /**
