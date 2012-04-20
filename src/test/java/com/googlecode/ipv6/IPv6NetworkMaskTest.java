@@ -1,5 +1,7 @@
-package be.jvb.ipv6;
+package com.googlecode.ipv6;
 
+import com.googlecode.ipv6.IPv6Address;
+import com.googlecode.ipv6.IPv6NetworkMask;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
