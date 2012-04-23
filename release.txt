@@ -1,12 +1,12 @@
 HOWTO make a release:
 
-- mvn release:prepare in trunk
-- mvn release:perform in trunk (will fail)
+- mvn release:prepare in trunk (will ask for gpg passphrase)
+- mvn release:perform in trunk
+- step 8 in https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide
 - mkdir -p artifacts/<version>/doc/
 - cp -r trunk/target/checkout/target/apidocs artifacts/<version>/doc/
 - svn add artifacts/<version>
 - find -name '*.html' -exec svn propset svn:mime-type text/html {} \;
 - svn commit
-- mvn release:clean in trunk
 - update documentation
 - provide new download on google code
