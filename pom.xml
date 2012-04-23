@@ -5,14 +5,14 @@
     <parent>
         <groupId>org.sonatype.oss</groupId>
         <artifactId>oss-parent</artifactId>
-        <version>5</version>
+        <version>7</version>
     </parent>
 
     <groupId>com.googlecode.ipv6</groupId>
-    <artifactId>ipv6</artifactId>
+    <artifactId>java-ipv6</artifactId>
     <version>0.5-SNAPSHOT</version>
     <packaging>jar</packaging>
-    <name>IPv6</name>
+    <name>Java IPv6 Library</name>
     <url>http://code.google.com/p/java-ipv6</url>
 
     <licenses>
