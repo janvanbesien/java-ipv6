@@ -17,7 +17,13 @@ public final class IPv6Address implements Comparable<IPv6Address>
 
     private final long lowBits;
 
-    public IPv6Address(long highBits, long lowBits)
+    /**
+     * Construct an IPv6Address from two longs representing the 64 highest and 64 lowest bits.
+     *
+     * @param highBits highest order bits
+     * @param lowBits  lowest order bits
+     */
+    IPv6Address(long highBits, long lowBits)
     {
         this.highBits = highBits;
         this.lowBits = lowBits;

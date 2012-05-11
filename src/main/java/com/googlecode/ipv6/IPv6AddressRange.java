@@ -13,13 +13,18 @@ public class IPv6AddressRange implements Comparable<IPv6AddressRange>, Iterable<
 
     private final IPv6Address last;
 
-    public IPv6AddressRange(IPv6Address first, IPv6Address last)
+    IPv6AddressRange(IPv6Address first, IPv6Address last)
     {
         if (first.compareTo(last) > 0)
             throw new IllegalArgumentException("Cannot create ip address range with last address < first address");
 
         this.first = first;
         this.last = last;
+    }
+
+    public static IPv6AddressRange fromFirstAndLast(IPv6Address first, IPv6Address last)
+    {
+        return new IPv6AddressRange(first, last);
     }
 
     public boolean contains(IPv6Address address)
@@ -64,12 +69,12 @@ public class IPv6AddressRange implements Comparable<IPv6AddressRange>, Iterable<
         else if (address.equals(first) && address.equals(last))
             return Collections.emptyList();
         else if (address.equals(first))
-            return Collections.singletonList(new IPv6AddressRange(first.add(1), last));
+            return Collections.singletonList(fromFirstAndLast(first.add(1), last));
         else if (address.equals(last))
-            return Collections.singletonList(new IPv6AddressRange(first, last.subtract(1)));
+            return Collections.singletonList(fromFirstAndLast(first, last.subtract(1)));
         else
-            return Arrays.asList(new IPv6AddressRange(first, address.subtract(1)),
-                                 new IPv6AddressRange(address.add(1), last));
+            return Arrays.asList(fromFirstAndLast(first, address.subtract(1)),
+                                 fromFirstAndLast(address.add(1), last));
     }
 
     /**
@@ -81,9 +86,9 @@ public class IPv6AddressRange implements Comparable<IPv6AddressRange>, Iterable<
     public IPv6AddressRange extend(IPv6Address address)
     {
         if (address.compareTo(first) < 0)
-            return new IPv6AddressRange(address, last);
+            return fromFirstAndLast(address, last);
         else if (address.compareTo(last) > 0)
-            return new IPv6AddressRange(first, address);
+            return fromFirstAndLast(first, address);
         else
             return this;
     }
@@ -107,12 +112,12 @@ public class IPv6AddressRange implements Comparable<IPv6AddressRange>, Iterable<
         else if (this.equals(network))
             return Collections.emptyList();
         else if (first.equals(network.getFirst()))
-            return Collections.singletonList(new IPv6AddressRange(network.getLast().add(1), last));
+            return Collections.singletonList(fromFirstAndLast(network.getLast().add(1), last));
         else if (last.equals(network.getLast()))
-            return Collections.singletonList(new IPv6AddressRange(first, network.getFirst().subtract(1)));
+            return Collections.singletonList(fromFirstAndLast(first, network.getFirst().subtract(1)));
         else
-            return Arrays.asList(new IPv6AddressRange(first, network.getFirst().subtract(1)),
-                                 new IPv6AddressRange(network.getLast().add(1), last));
+            return Arrays.asList(fromFirstAndLast(first, network.getFirst().subtract(1)),
+                                 fromFirstAndLast(network.getLast().add(1), last));
 
     }
 

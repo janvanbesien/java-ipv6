@@ -13,15 +13,30 @@ public final class IPv6NetworkMask
     private final int prefixLength;
 
     /**
+     * Construct an IPv6 network mask from a prefix length. The prefix length should be in the interval ]0, 128].
+     *
+     * @param prefixLength prefix length
+     * @throws IllegalArgumentException if the prefix length is not in the interval ]0, 128]
+     */
+    IPv6NetworkMask(int prefixLength)
+    {
+        if (prefixLength <= 0 || prefixLength > 128)
+            throw new IllegalArgumentException("prefix length should be in interval ]0, 128]");
+
+        this.prefixLength = prefixLength;
+    }
+
+
+    /**
      * Construct an IPv6 network mask from an IPv6 address. The address should be a valid network mask.
      *
      * @param iPv6Address address to use as network mask
      * @throws IllegalArgumentException if the address is not a valid network mask
      */
-    public IPv6NetworkMask(final IPv6Address iPv6Address)
+    public static IPv6NetworkMask fromAddress(final IPv6Address iPv6Address)
     {
         validateNetworkMask(iPv6Address);
-        this.prefixLength = iPv6Address.numberOfLeadingOnes();
+        return new IPv6NetworkMask(iPv6Address.numberOfLeadingOnes());
     }
 
     /**
@@ -30,12 +45,9 @@ public final class IPv6NetworkMask
      * @param prefixLength prefix length
      * @throws IllegalArgumentException if the prefix length is not in the interval ]0, 128]
      */
-    public IPv6NetworkMask(int prefixLength)
+    public static IPv6NetworkMask fromPrefixLength(int prefixLength)
     {
-        if (prefixLength <= 0 || prefixLength > 128)
-            throw new IllegalArgumentException("prefix length should be in interval ]0, 128]");
-
-        this.prefixLength = prefixLength;
+        return new IPv6NetworkMask(prefixLength);
     }
 
     private static void validateNetworkMask(IPv6Address addressToValidate)
