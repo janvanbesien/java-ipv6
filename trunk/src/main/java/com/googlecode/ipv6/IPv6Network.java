@@ -18,7 +18,7 @@ public final class IPv6Network extends IPv6AddressRange
      * @param address     address
      * @param networkMask network mask
      */
-    public IPv6Network(IPv6Address address, IPv6NetworkMask networkMask)
+    private IPv6Network(IPv6Address address, IPv6NetworkMask networkMask)
     {
         super(address.maskWithNetworkMask(networkMask), address.maximumAddressWithNetworkMask(networkMask));
 
@@ -27,43 +27,35 @@ public final class IPv6Network extends IPv6AddressRange
     }
 
     /**
-     * Construct from address and prefix length.
+     * Create an IPv6 network from an IPv6Address and an IPv6NetworkMask
      *
-     * @param address      address
-     * @param prefixLength prefix length
+     * @param address     IPv6 address (the network address or any other address within the network)
+     * @param networkMask IPv6 network mask
+     * @return IPv6 network
      */
-    public IPv6Network(IPv6Address address, int prefixLength)
+    public static IPv6Network fromAddressAndMask(IPv6Address address, IPv6NetworkMask networkMask)
     {
-        super(address.maskWithNetworkMask(new IPv6NetworkMask(prefixLength)),
-                address.maximumAddressWithNetworkMask(new IPv6NetworkMask(prefixLength)));
-
-        final IPv6NetworkMask networkMask = new IPv6NetworkMask(prefixLength);
-
-        this.address = address.maskWithNetworkMask(networkMask);
-        this.networkMask = networkMask;
+        return new IPv6Network(address, networkMask);
     }
 
     /**
-     * Construct from first and last address. This will construct the smallest possible network ("longest prefix length") which contains
-     * both addresses.
+     * Create an IPv6 network from the two addresses within the network. This will construct the smallest possible network ("longest prefix
+     * length") which contains both addresses.
      *
-     * @param first first address
-     * @param last  last address
+     * @param one address one
+     * @param two address two, should be bigger than address one
      */
-    public IPv6Network(IPv6Address first, IPv6Address last)
+    public static IPv6Network fromTwoAddresses(IPv6Address one, IPv6Address two)
     {
-        super(first.maskWithNetworkMask(new IPv6NetworkMask(IPv6NetworkHelpers.longestPrefixLength(first, last))),
-                first.maximumAddressWithNetworkMask(new IPv6NetworkMask(IPv6NetworkHelpers.longestPrefixLength(first, last))));
-
-        this.networkMask = new IPv6NetworkMask(IPv6NetworkHelpers.longestPrefixLength(first, last));
-        this.address = this.getFirst();
+        final IPv6NetworkMask longestPrefixLength = IPv6NetworkMask.fromPrefixLength(IPv6NetworkHelpers.longestPrefixLength(one, two));
+        return new IPv6Network(one.maskWithNetworkMask(longestPrefixLength), longestPrefixLength);
     }
 
     /**
      * Create an IPv6 network from its String representation. For example "1234:5678:abcd:0:0:0:0:0/64" or "2001::ff/128".
      *
      * @param string string representation
-     * @return IPv6 address
+     * @return IPv6 network
      */
     public static IPv6Network fromString(String string)
     {
@@ -77,7 +69,7 @@ public final class IPv6Network extends IPv6AddressRange
 
         final IPv6Address networkAddress = IPv6Address.fromString(networkAddressString);
 
-        return new IPv6Network(networkAddress, new IPv6NetworkMask(prefixLength));
+        return fromAddressAndMask(networkAddress, new IPv6NetworkMask(prefixLength));
     }
 
     private static String parseNetworkAddress(String string)
@@ -110,7 +102,7 @@ public final class IPv6Network extends IPv6AddressRange
         return address.toLongString() + "/" + networkMask.asPrefixLength();
     }
 
-        @Override
+    @Override
     public boolean equals(Object o)
     {
         if (this == o) return true;

@@ -23,66 +23,65 @@ public final class IPv6AddressPool
     private final IPv6Network lastAllocated;
 
     /**
-     * Create a pool in between the given first and last address (inclusive) which is completely free. The given subnet size is the network
-     * mask (thus size) of the allocated subnets in this range. This constructor verifies that the whole range is "aligned" with subnets of
-     * this size (i.e. there should not be a waste of space in the beginning or end which is smaller than one subnet of the given subnet
-     * size).
+     * Create a pool of the given range (boundaries inclusive) which is completely free. The given subnet size is the network mask (thus
+     * size) of the allocated subnets in this range. This constructor verifies that the whole range is "aligned" with subnets of this size
+     * (i.e. there should not be a waste of space in the beginning or end which is smaller than one subnet of the given subnet size).
      *
-     * @param first                first ip address of the range
-     * @param last                 last ip address of the range
+     * @param range                range from within to allocate
      * @param allocationSubnetSize size of the subnets that will be allocated
      */
-    public IPv6AddressPool(final IPv6Address first, final IPv6Address last, final IPv6NetworkMask allocationSubnetSize)
+    public static IPv6AddressPool fromRangeAndSubnet(final IPv6AddressRange range,
+                                                     final IPv6NetworkMask allocationSubnetSize)
     {
         // in the beginning, all is free
-        this(first, last, allocationSubnetSize, new TreeSet<IPv6AddressRange>(Arrays.asList(new IPv6AddressRange(first, last))), null);
+        return new IPv6AddressPool(range, allocationSubnetSize, new TreeSet<IPv6AddressRange>(Arrays.asList(range)), null);
     }
 
     /**
      * Private constructor to construct a pool with a given set of free ranges and a network which was just allocated.
      *
-     * @param first                first ip address of the range
-     * @param last                 last ip address of the range
+     * @param range                range from within to allocate
      * @param allocationSubnetSize size of the subnets that will be allocated
      * @param freeRanges           free ranges in the allocatable IP address range
      */
-    private IPv6AddressPool(final IPv6Address first, final IPv6Address last, final IPv6NetworkMask allocationSubnetSize,
+    private IPv6AddressPool(final IPv6AddressRange range, final IPv6NetworkMask allocationSubnetSize,
                             final SortedSet<IPv6AddressRange> freeRanges, final IPv6Network lastAllocated)
     {
-        this.underlyingRange = new IPv6AddressRange(first, last);
+        this.underlyingRange = range;
 
         this.allocationSubnetSize = allocationSubnetSize;
         this.freeRanges = Collections.unmodifiableSortedSet(freeRanges);
         this.lastAllocated = lastAllocated;
 
-        validateFreeRanges(first, last, freeRanges);
-        validateRangeIsMultipleOfSubnetsOfGivenSize(first, last, allocationSubnetSize);
+        validateFreeRanges(underlyingRange, freeRanges);
+        validateRangeIsMultipleOfSubnetsOfGivenSize(underlyingRange, allocationSubnetSize);
     }
 
-    private void validateFreeRanges(IPv6Address first, IPv6Address last, SortedSet<IPv6AddressRange> toValidate)
+    private void validateFreeRanges(IPv6AddressRange range, SortedSet<IPv6AddressRange> toValidate)
     {
-        if (!toValidate.isEmpty() && !checkWithinBounds(first, last, toValidate))
+        if (!toValidate.isEmpty() && !checkWithinBounds(range, toValidate))
             throw new IllegalArgumentException("invalid free ranges: not all within bounds of overall range");
 
-        // TODO: some more validations would be usefull. For example the free ranges should be defragmented and non overlapping etc
+        // TODO: some more validations would be useful. For example the free ranges should be defragmented and non overlapping etc
     }
 
-    private boolean checkWithinBounds(IPv6Address first, IPv6Address last, SortedSet<IPv6AddressRange> toValidate)
+    private boolean checkWithinBounds(IPv6AddressRange range, SortedSet<IPv6AddressRange> toValidate)
     {
-        return (toValidate.first().getFirst().compareTo(first) >= 0 && toValidate.last().getLast().compareTo(last) <= 0);
+        return (toValidate.first().getFirst().compareTo(range.getFirst()) >= 0
+                && toValidate.last().getLast().compareTo(range.getLast()) <= 0);
     }
 
-    private void validateRangeIsMultipleOfSubnetsOfGivenSize(IPv6Address first, IPv6Address last, IPv6NetworkMask allocationSubnetSize)
+    private void validateRangeIsMultipleOfSubnetsOfGivenSize(IPv6AddressRange range, IPv6NetworkMask allocationSubnetSize)
     {
         final int allocatableBits = 128 - allocationSubnetSize.asPrefixLength();
 
-        if (first.numberOfTrailingZeroes() < allocatableBits)
+        if (range.getFirst().numberOfTrailingZeroes() < allocatableBits)
             throw new IllegalArgumentException(
                     "range [" + this + "] is not aligned with prefix length [" + allocationSubnetSize.asPrefixLength() + "], "
                             + "first address should end with " +
                             allocatableBits + " zero bits");
 
-        if (last.numberOfTrailingOnes() < allocatableBits)
+        if (range.getLast().numberOfTrailingOnes() < allocatableBits)
             throw new IllegalArgumentException(
                     "range [" + this + "] is not aligned with prefix length [" + allocationSubnetSize.asPrefixLength()
                             + "], last address should end with " +
@@ -108,7 +107,7 @@ public final class IPv6AddressPool
         {
             // get the first range of free subnets, and take the first subnet of that range
             final IPv6AddressRange firstFreeRange = freeRanges.first();
-            final IPv6Network allocated = new IPv6Network(firstFreeRange.getFirst(), allocationSubnetSize);
+            final IPv6Network allocated = IPv6Network.fromAddressAndMask(firstFreeRange.getFirst(), allocationSubnetSize);
 
             return doAllocate(allocated, firstFreeRange);
         }
@@ -133,7 +132,8 @@ public final class IPv6AddressPool
 
         if (!this.allocationSubnetSize.equals(toAllocate.getNetmask()))
             throw new IllegalArgumentException("can not allocate network with prefix length /" + toAllocate.getNetmask().asPrefixLength() +
-                    " from a pool configured to hand out subnets with prefix length /" + allocationSubnetSize);
+                                                       " from a pool configured to hand out subnets with prefix length /"
+                                                       + allocationSubnetSize);
 
         // go find the range that contains the requested subnet
         final IPv6AddressRange rangeToAllocateFrom = findFreeRangeContaining(toAllocate);
@@ -194,7 +194,7 @@ public final class IPv6AddressPool
         // and add the resulting ranges as new free ranges
         newFreeRanges.addAll(newRanges);
 
-        return new IPv6AddressPool(getFirst(), getLast(), allocationSubnetSize, newFreeRanges, toAllocate);
+        return new IPv6AddressPool(underlyingRange, allocationSubnetSize, newFreeRanges, toAllocate);
     }
 
     /**
@@ -228,23 +228,23 @@ public final class IPv6AddressPool
                 // merge two existing ranges
                 newFreeRanges.remove(freeRangeBeforeNetwork);
                 newFreeRanges.remove(freeRangeAfterNetwork);
-                newFreeRanges.add(new IPv6AddressRange(freeRangeBeforeNetwork.getFirst(), freeRangeAfterNetwork.getLast()));
+                newFreeRanges.add(IPv6AddressRange.fromFirstAndLast(freeRangeBeforeNetwork.getFirst(), freeRangeAfterNetwork.getLast()));
             }
             else if (freeRangeBeforeNetwork != null)
             {
                 // append
                 newFreeRanges.remove(freeRangeBeforeNetwork);
-                newFreeRanges.add(new IPv6AddressRange(freeRangeBeforeNetwork.getFirst(), toDeAllocate.getLast()));
+                newFreeRanges.add(IPv6AddressRange.fromFirstAndLast(freeRangeBeforeNetwork.getFirst(), toDeAllocate.getLast()));
             }
             else /*if (freeRangeAfterNetwork != null)*/
             {
                 // prepend
                 newFreeRanges.remove(freeRangeAfterNetwork);
-                newFreeRanges.add(new IPv6AddressRange(toDeAllocate.getFirst(), freeRangeAfterNetwork.getLast()));
+                newFreeRanges.add(IPv6AddressRange.fromFirstAndLast(toDeAllocate.getFirst(), freeRangeAfterNetwork.getLast()));
             }
         }
 
-        return new IPv6AddressPool(getFirst(), getLast(), allocationSubnetSize, newFreeRanges, getLastAllocated());
+        return new IPv6AddressPool(underlyingRange, allocationSubnetSize, newFreeRanges, getLastAllocated());
     }
 
     /**
