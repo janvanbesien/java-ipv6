@@ -2,6 +2,8 @@ package com.googlecode.ipv6;
 
 import java.util.BitSet;
 
+import static com.googlecode.ipv6.BitSetHelpers.bitSetOf;
+
 /**
  * Helper methods used by IPv6Network.
  *
@@ -11,8 +13,8 @@ public class IPv6NetworkHelpers
 {
     static int longestPrefixLength(IPv6Address first, IPv6Address last)
     {
-        final BitSet firstBits = BitSet.valueOf(new long[]{first.getLowBits(), first.getHighBits()});
-        final BitSet lastBits = BitSet.valueOf(new long[]{last.getLowBits(), last.getHighBits()});
+        final BitSet firstBits = bitSetOf(first.getLowBits(), first.getHighBits());
+        final BitSet lastBits = bitSetOf(last.getLowBits(), last.getHighBits());
 
         return countLeadingSimilarBits(firstBits, lastBits);
     }
