@@ -8,7 +8,7 @@ import java.util.BitSet;
  *
  * @author Jan Van Besien
  */
-public class BitSetHelpers
+class BitSetHelpers
 {
     static BitSet bitSetOf(long lowerBits, long upperBits)
     {
