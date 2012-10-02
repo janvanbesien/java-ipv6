@@ -9,7 +9,7 @@
 
     <groupId>com.googlecode.java-ipv6</groupId>
     <artifactId>java-ipv6</artifactId>
-    <version>0.8-SNAPSHOT</version>
+    <version>0.8</version>
     <packaging>jar</packaging>
     <name>Java IPv6 Library</name>
     <url>http://code.google.com/p/java-ipv6</url>
@@ -23,9 +23,9 @@
     </licenses>
 
     <scm>
-        <url>https://java-ipv6.googlecode.com/svn/trunk</url>
-        <connection>scm:svn:https://java-ipv6.googlecode.com/svn/trunk/</connection>
-        <developerConnection>scm:svn:https://java-ipv6.googlecode.com/svn/trunk/</developerConnection>
+        <url>https://java-ipv6.googlecode.com/svn/tags/java-ipv6-0.8</url>
+        <connection>scm:svn:https://java-ipv6.googlecode.com/svn/tags/java-ipv6-0.8</connection>
+        <developerConnection>scm:svn:https://java-ipv6.googlecode.com/svn/tags/java-ipv6-0.8</developerConnection>
     </scm>
 
     <dependencies>
