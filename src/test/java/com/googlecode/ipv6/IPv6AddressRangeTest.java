@@ -1,5 +1,6 @@
 package com.googlecode.ipv6;
 
+import junit.framework.Assert;
 import org.junit.Test;
 
 import static com.googlecode.ipv6.IPv6Address.fromString;
@@ -91,4 +92,28 @@ public class IPv6AddressRangeTest
         assertEquals(5, amountOfAddresses);
     }
 
+    @Test
+    public void compareTo()
+    {
+        final IPv6AddressRange a =
+                IPv6AddressRange.fromFirstAndLast(fromString("aaaa:ffff:ffff:ffff:1:1:1:1"), fromString("cccc:ffff:ffff:ffff:5:5:5:5"));
+        final IPv6AddressRange b =
+                IPv6AddressRange.fromFirstAndLast(fromString("aaaa:ffff:ffff:ffff:1:1:1:1"), fromString("bbbb:ffff:ffff:ffff:5:5:5:5"));
+        final IPv6AddressRange c =
+                IPv6AddressRange.fromFirstAndLast(fromString("bbbb:ffff:ffff:ffff:1:1:1:1"), fromString("cccc:ffff:ffff:ffff:5:5:5:5"));
+        final IPv6AddressRange d =
+                IPv6AddressRange.fromFirstAndLast(fromString("bbbb:ffff:ffff:ffff:1:1:1:1"), fromString("bbbb:ffff:ffff:ffff:5:5:5:5"));
+
+        Assert.assertTrue(a.compareTo(b) > 0);
+        Assert.assertTrue(a.compareTo(c) < 0);
+        Assert.assertTrue(a.compareTo(d) < 0);
+        Assert.assertTrue(b.compareTo(c) < 0);
+        Assert.assertTrue(b.compareTo(d) < 0);
+        Assert.assertTrue(c.compareTo(d) > 0);
+
+        Assert.assertTrue(a.compareTo(a) == 0);
+        Assert.assertTrue(b.compareTo(b) == 0);
+        Assert.assertTrue(c.compareTo(c) == 0);
+        Assert.assertTrue(d.compareTo(d) == 0);
+    }
 }
