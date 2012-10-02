@@ -135,10 +135,19 @@ public class IPv6AddressRange implements Comparable<IPv6AddressRange>, Iterable<
         return first.toLongString() + " - " + last.toLongString();
     }
 
+    /**
+     * The natural order of {@link com.googlecode.ipv6.IPv6AddressRange}s orders them on increasing first addresses, and on increasing last
+     * address if the first address would be equal.
+     * <p/>
+     * Note that the natural order does thus not compare sizes of ranges.
+     *
+     * @param that range to compare with
+     * @return negative, zero or positive depending on whether this is smaller, equal or greater than that
+     */
     @Override
     public int compareTo(IPv6AddressRange that)
     {
-        if (this.first != that.first)
+        if (!this.first.equals(that.first))
             return this.first.compareTo(that.first);
         else
             return this.last.compareTo(that.last);
