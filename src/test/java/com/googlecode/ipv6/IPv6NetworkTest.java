@@ -6,6 +6,7 @@ import java.util.Random;
 
 import static com.googlecode.ipv6.IPv6Address.fromString;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Jan Van Besien
@@ -76,4 +77,20 @@ public class IPv6NetworkTest
                      IPv6Network.fromString("a:b:c::/128").getNetmask());
     }
 
+    @Test
+    public void contains()
+    {
+        assertTrue(IPv6Network.fromString("ffff::/8").contains(IPv6Address.fromString("ffff::1")));
+        assertTrue(IPv6Network.fromString("1234:5678:1234:5678::/64").contains(IPv6Address.fromString("1234:5678:1234:5678:1::")));
+    }
+
+    @Test
+    public void zeroNetworkContainsEverything()
+    {
+        final Random random = new Random();
+        final IPv6Address randomAddress = new IPv6Address(random.nextLong(), random.nextLong());
+
+        assertTrue(IPv6Network.fromString("::/0").contains(randomAddress));
+        assertTrue(IPv6Network.fromString("abcd:effe:dcba::/0").contains(randomAddress));
+    }
 }

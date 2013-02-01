@@ -22,9 +22,9 @@ public class IPv6NetworkMaskTest
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void constructInvalidFromPrefixLength_Zero()
+    public void constructInvalidFromPrefixLength_Negative()
     {
-        new IPv6NetworkMask(0);
+        new IPv6NetworkMask(-1);
     }
 
     @Test(expected = IllegalArgumentException.class)

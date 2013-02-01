@@ -22,8 +22,8 @@ public final class IPv6NetworkMask
      */
     IPv6NetworkMask(int prefixLength)
     {
-        if (prefixLength <= 0 || prefixLength > 128)
-            throw new IllegalArgumentException("prefix length should be in interval ]0, 128]");
+        if (prefixLength < 0 || prefixLength > 128)
+            throw new IllegalArgumentException("prefix length should be in interval [0, 128]");
 
         this.prefixLength = prefixLength;
     }
