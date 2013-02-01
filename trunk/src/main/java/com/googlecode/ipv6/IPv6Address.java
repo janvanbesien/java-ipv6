@@ -172,6 +172,10 @@ public final class IPv6Address implements Comparable<IPv6Address>
         {
             return new IPv6Address(this.highBits, 0);
         }
+        else if (networkMask.asPrefixLength() == 0)
+        {
+            return new IPv6Address(0, 0);
+        }
         else if (networkMask.asPrefixLength() > 64)
         {
             // apply mask on low bits only
