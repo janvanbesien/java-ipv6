@@ -1,7 +1,21 @@
+/*
+ * Copyright 2013 Jan Van Besien
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.googlecode.ipv6;
 
-import com.googlecode.ipv6.IPv6Address;
-import com.googlecode.ipv6.IPv6NetworkMask;
 import org.junit.Test;
 
 import java.net.Inet6Address;
@@ -190,34 +204,34 @@ public class IPv6AddressTest
     public void maskWithPrefixLength()
     {
         assertEquals(fromString("2001:0db8:85a3:0000:0000:8a2e:0370:7334"),
-                fromString("2001:0db8:85a3:0000:0000:8a2e:0370:7334").maskWithNetworkMask(new IPv6NetworkMask(128)));
+                     fromString("2001:0db8:85a3:0000:0000:8a2e:0370:7334").maskWithNetworkMask(new IPv6NetworkMask(128)));
         assertEquals(fromString("ffff:ffff:ffff:ffff:ffff:ffff:ffff:ff00"),
-                fromString("ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff").maskWithNetworkMask(new IPv6NetworkMask(120)));
+                     fromString("ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff").maskWithNetworkMask(new IPv6NetworkMask(120)));
         assertEquals(fromString("2001:0db8:85a3:0000:0000:8a2e:0370:7300"),
-                fromString("2001:0db8:85a3:0000:0000:8a2e:0370:7334").maskWithNetworkMask(new IPv6NetworkMask(120)));
+                     fromString("2001:0db8:85a3:0000:0000:8a2e:0370:7334").maskWithNetworkMask(new IPv6NetworkMask(120)));
         assertEquals(fromString("2001:0db8:85a3::"),
-                fromString("2001:0db8:85a3:0000:0000:8a2e:0370:7334").maskWithNetworkMask(new IPv6NetworkMask(64)));
+                     fromString("2001:0db8:85a3:0000:0000:8a2e:0370:7334").maskWithNetworkMask(new IPv6NetworkMask(64)));
         assertEquals(fromString("2000::"),
-                fromString("2001:0db8:85a3:0000:0000:8a2e:0370:7334").maskWithNetworkMask(new IPv6NetworkMask(15)));
+                     fromString("2001:0db8:85a3:0000:0000:8a2e:0370:7334").maskWithNetworkMask(new IPv6NetworkMask(15)));
         assertEquals(fromString("8000::"),
-                fromString("ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff").maskWithNetworkMask(new IPv6NetworkMask(1)));
+                     fromString("ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff").maskWithNetworkMask(new IPv6NetworkMask(1)));
     }
 
     @Test
     public void maximumAddressWithPrefixLength()
     {
         assertEquals(fromString("2001:0db8:85a3:0000:0000:8a2e:0370:7334"),
-                fromString("2001:0db8:85a3:0000:0000:8a2e:0370:7334").maximumAddressWithNetworkMask(new IPv6NetworkMask(128)));
+                     fromString("2001:0db8:85a3:0000:0000:8a2e:0370:7334").maximumAddressWithNetworkMask(new IPv6NetworkMask(128)));
         assertEquals(fromString("ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff"),
-                fromString("ffff:ffff:ffff:ffff:ffff:ffff:ffff:ff00").maximumAddressWithNetworkMask(new IPv6NetworkMask(120)));
+                     fromString("ffff:ffff:ffff:ffff:ffff:ffff:ffff:ff00").maximumAddressWithNetworkMask(new IPv6NetworkMask(120)));
         assertEquals(fromString("2001:0db8:85a3:0000:0000:8a2e:0370:73ff"),
-                fromString("2001:0db8:85a3:0000:0000:8a2e:0370:7300").maximumAddressWithNetworkMask(new IPv6NetworkMask(120)));
+                     fromString("2001:0db8:85a3:0000:0000:8a2e:0370:7300").maximumAddressWithNetworkMask(new IPv6NetworkMask(120)));
         assertEquals(fromString("2001:0db8:85a3:0000:ffff:ffff:ffff:ffff"),
-                fromString("2001:0db8:85a3:0000:0000:8a2e:0370:7334").maximumAddressWithNetworkMask(new IPv6NetworkMask(64)));
+                     fromString("2001:0db8:85a3:0000:0000:8a2e:0370:7334").maximumAddressWithNetworkMask(new IPv6NetworkMask(64)));
         assertEquals(fromString("ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff"),
-                fromString("8000::").maximumAddressWithNetworkMask(new IPv6NetworkMask(1)));
+                     fromString("8000::").maximumAddressWithNetworkMask(new IPv6NetworkMask(1)));
         assertEquals(fromString("7fff:ffff:ffff:ffff:ffff:ffff:ffff:ffff"),
-                fromString("7fff::").maximumAddressWithNetworkMask(new IPv6NetworkMask(1)));
+                     fromString("7fff::").maximumAddressWithNetworkMask(new IPv6NetworkMask(1)));
     }
 
     @Test
