@@ -25,8 +25,7 @@ import java.util.Random;
 
 import static com.googlecode.ipv6.IPv6Address.fromInetAddress;
 import static com.googlecode.ipv6.IPv6Address.fromString;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * @author Jan Van Besien
@@ -120,6 +119,21 @@ public class IPv6AddressTest
     {
         final InetAddress inetAddress = Inet6Address.getByName("2001:0db8:85a3:0000:0000:8a2e:0370:7334");
         assertEquals(inetAddress, fromString("2001:0db8:85a3:0000:0000:8a2e:0370:7334").toInetAddress());
+    }
+
+    @Test
+    public void positionOfLongestRunOfZeroes()
+    {
+        assertArrayEquals(new int[]{0, 8}, fromString("::").startAndLengthOfLongestRunOfZeroes());
+        assertArrayEquals(new int[]{3, 5}, fromString("a:b:c::").startAndLengthOfLongestRunOfZeroes());
+        assertArrayEquals(new int[]{2, 5}, fromString("a:b::c").startAndLengthOfLongestRunOfZeroes());
+        assertArrayEquals(new int[]{4, 4}, fromString("a:0:0:c::").startAndLengthOfLongestRunOfZeroes());
+    }
+
+    @Test
+    public void toStringCompactsLongestRunOfZeroes()
+    {
+        assertEquals("0:0:1::", fromString("0:0:1::").toString()); // and not ::1:0:0:0:0:0
     }
 
     @Test

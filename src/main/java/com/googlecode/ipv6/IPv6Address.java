@@ -244,23 +244,21 @@ public final class IPv6Address implements Comparable<IPv6Address>
 
         final StringBuilder result = new StringBuilder();
 
-        boolean shortHandNotationUsed = false;
-        boolean shortHandNotationBusy = false;
+        int[] shortHandNotationPositionAndLength = startAndLengthOfLongestRunOfZeroes();
+        int shortHandNotationPosition = shortHandNotationPositionAndLength[0];
+        int shortHandNotationLength = shortHandNotationPositionAndLength[1];
+
         for (int i = 0; i < strings.length; i++)
         {
-            if (!shortHandNotationUsed && i < N_SHORTS - 1 && IPv6AddressHelpers.isZeroString(strings[i]) && IPv6AddressHelpers
-                    .isZeroString(strings[i + 1]))
+            if (i == shortHandNotationPosition)
             {
-                shortHandNotationUsed = true;
-                shortHandNotationBusy = true;
                 if (i == 0)
                     result.append("::");
                 else
                     result.append(":");
             }
-            else if (!(IPv6AddressHelpers.isZeroString(strings[i]) && shortHandNotationBusy))
+            else if (!(i > shortHandNotationPosition && i < shortHandNotationPosition + shortHandNotationLength))
             {
-                shortHandNotationBusy = false;
                 result.append(strings[i]);
                 if (i < N_SHORTS - 1)
                     result.append(":");
@@ -322,6 +320,35 @@ public final class IPv6Address implements Comparable<IPv6Address>
         }
 
         return shorts;
+    }
+
+    int[] startAndLengthOfLongestRunOfZeroes()
+    {
+        int longestConsecutiveZeroes = 0;
+        int longestConsecutiveZeroesPos = -1;
+        short[] shorts = toShortArray();
+        for (int pos = 0; pos < shorts.length; pos++)
+        {
+            int consecutiveZeroesAtCurrentPos = countConsecutiveZeroes(shorts, pos);
+            if (consecutiveZeroesAtCurrentPos > longestConsecutiveZeroes)
+            {
+                longestConsecutiveZeroes = consecutiveZeroesAtCurrentPos;
+                longestConsecutiveZeroesPos = pos;
+            }
+        }
+
+        return new int[]{longestConsecutiveZeroesPos, longestConsecutiveZeroes};
+    }
+
+    private int countConsecutiveZeroes(short[] shorts, int offset)
+    {
+        int count = 0;
+        for (int i = offset; i < shorts.length && shorts[i] == 0; i++)
+        {
+            count++;
+        }
+
+        return count;
     }
 
     @Override
