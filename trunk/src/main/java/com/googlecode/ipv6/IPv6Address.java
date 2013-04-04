@@ -33,16 +33,23 @@ public final class IPv6Address implements Comparable<IPv6Address>
 
     private final long lowBits;
 
-    /**
-     * Construct an IPv6Address from two longs representing the 64 highest and 64 lowest bits.
-     *
-     * @param highBits highest order bits
-     * @param lowBits  lowest order bits
-     */
     IPv6Address(long highBits, long lowBits)
     {
         this.highBits = highBits;
         this.lowBits = lowBits;
+    }
+
+    /**
+     * Construct an IPv6Address from two longs representing the 64 highest and 64 lowest bits. It is usually easier to construct
+     * IPv6Addresses from a {@link String} or an {@link java.net.InetAddress}. The internal representation of an IPv6Address is exactly
+     * these two longs though, so if you already happen to have them, this provides a very efficient way to construct an IPv6Address.
+     *
+     * @param highBits highest order bits
+     * @param lowBits  lowest order bits
+     */
+    public static IPv6Address fromLongs(long highBits, long lowBits)
+    {
+        return new IPv6Address(highBits, lowBits);
     }
 
     /**
