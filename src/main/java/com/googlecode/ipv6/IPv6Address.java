@@ -19,6 +19,8 @@ package com.googlecode.ipv6;
 import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.nio.ByteBuffer;
+import java.nio.LongBuffer;
 
 /**
  * Immutable representation of an IPv6 address.
@@ -28,6 +30,8 @@ import java.net.UnknownHostException;
 public final class IPv6Address implements Comparable<IPv6Address>
 {
     private static final int N_SHORTS = 8;
+
+    private static final int N_BYTES = 16;
 
     private final long highBits;
 
@@ -104,6 +108,36 @@ public final class IPv6Address implements Comparable<IPv6Address>
     }
 
     /**
+     * Create an IPv6 address from a byte array.
+     *
+     * @param bytes byte array with 16 bytes
+     * @return IPv6 address
+     */
+    public static IPv6Address fromByteArray(final byte[] bytes)
+    {
+        if (bytes == null)
+            throw new IllegalArgumentException("can not construct from [null]");
+        if (bytes.length != N_BYTES)
+            throw new IllegalArgumentException("the byte array to construct from should be 16 bytes long");
+
+        ByteBuffer buf = ByteBuffer.allocate(N_BYTES);
+        for (byte b : bytes)
+        {
+            buf.put(b);
+        }
+
+        buf.rewind();
+        LongBuffer longBuffer = buf.asLongBuffer();
+        return new IPv6Address(longBuffer.get(), longBuffer.get());
+    }
+
+    public byte[] toByteArray()
+    {
+        ByteBuffer byteBuffer = ByteBuffer.allocate(N_BYTES).putLong(highBits).putLong(lowBits);
+        return byteBuffer.array();
+    }
+
+    /**
      * Addition. Will never overflow, but wraps around when the highest ip address has been reached.
      *
      * @param value value to add
@@ -117,7 +151,7 @@ public final class IPv6Address implements Comparable<IPv6Address>
         {
             if (IPv6AddressHelpers.isLessThanUnsigned(newLowBits, lowBits))
             {
-                // oops, we added something postive and the result is smaller -> overflow detected (carry over one bit from low to high)
+                // oops, we added something positive and the result is smaller -> overflow detected (carry over one bit from low to high)
                 return new IPv6Address(highBits + 1, newLowBits);
             }
             else
@@ -314,7 +348,7 @@ public final class IPv6Address implements Comparable<IPv6Address>
         return strings;
     }
 
-    public short[] toShortArray()
+    private short[] toShortArray()
     {
         final short[] shorts = new short[N_SHORTS];
 

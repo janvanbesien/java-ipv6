@@ -122,6 +122,39 @@ public class IPv6AddressTest
     }
 
     @Test
+    public void constructFromByteArray() throws UnknownHostException
+    {
+        assertEquals("1:1:1:1:1:1:1:1",
+                     IPv6Address.fromByteArray(
+                             new byte[]{0x00, 0x01, 0x00, 0x01, 0x00, 0x01, 0x00, 0x01, 0x00, 0x01, 0x00, 0x01, 0x00, 0x01, 0x00, 0x01})
+                             .toString());
+    }
+
+    @Test
+    public void convertToByteArray() throws UnknownHostException
+    {
+        assertArrayEquals(
+                new byte[]{0x00, 0x01, 0x00, 0x01, 0x00, 0x01, 0x00, 0x01, 0x00, 0x01, 0x00, 0x01, 0x00, 0x01, 0x00, 0x01},
+                IPv6Address.fromString("1:1:1:1:1:1:1:1").toByteArray());
+    }
+
+    @Test
+    public void convertToAndFromByteArray()
+    {
+        final int nTests = 10000;
+        final Random rg = new Random();
+
+        for (int i = 0; i < nTests; i++)
+        {
+            byte[] randomBytes = new byte[16];
+            rg.nextBytes(randomBytes);
+
+            final IPv6Address address = IPv6Address.fromByteArray(randomBytes);
+            assertArrayEquals(randomBytes, address.toByteArray());
+        }
+    }
+
+    @Test
     public void positionOfLongestRunOfZeroes()
     {
         assertArrayEquals(new int[]{0, 8}, fromString("::").startAndLengthOfLongestRunOfZeroes());
