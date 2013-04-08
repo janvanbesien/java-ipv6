@@ -289,9 +289,11 @@ public final class IPv6Address implements Comparable<IPv6Address>
         int shortHandNotationPosition = shortHandNotationPositionAndLength[0];
         int shortHandNotationLength = shortHandNotationPositionAndLength[1];
 
+        boolean useShortHandNotation = shortHandNotationLength > 1; // RFC5952 recommends not to use shorthand notation for a single zero
+
         for (int i = 0; i < strings.length; i++)
         {
-            if (i == shortHandNotationPosition)
+            if (useShortHandNotation && i == shortHandNotationPosition)
             {
                 if (i == 0)
                     result.append("::");
