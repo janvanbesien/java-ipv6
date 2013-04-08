@@ -4,4 +4,9 @@
 
   * construct IPv6Address from byte array
   * convert IPv6Address to byte array
+  * construct IPv6Address from two longs (like the internal representation)
   * in toString: use shorthand notation for zeroes on the longest run of zeroes, in stead of on the first run of zeroes
+
+= v0.10 =
+
+  * allow network with zero prefix length (e.g. ::/0)
