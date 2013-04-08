@@ -1,0 +1,7 @@
+#summary New features per release
+
+= v0.11 =
+
+* construct IPv6Address from byte array
+* convert IPv6Address to byte array
+* in toString: use shorthand notation for zeroes on the longest run of zeroes, in stead of on the first run of zeroes
