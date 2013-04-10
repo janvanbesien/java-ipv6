@@ -290,6 +290,24 @@ public final class IPv6Address implements Comparable<IPv6Address>
     }
 
     /**
+     * @return true if the address is a multicast address (an address in the network ff00::/8)
+     */
+    public boolean isMulticast()
+    {
+        return IPv6Network.fromString("ff00::/8").contains(this);
+    }
+
+    public boolean isSiteLocal()
+    {
+        return IPv6Network.fromString("fec0::/48").contains(this);
+    }
+
+    public boolean isLinkLocal()
+    {
+        return IPv6Network.fromString("fe80::/64").contains(this);
+    }
+
+    /**
      * Returns a string representation of the IPv6 address. It will use shorthand notation and special notation for IPv4-mapped IPv6
      * addresses whenever possible.
      *
