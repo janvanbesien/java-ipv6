@@ -1,5 +1,13 @@
 #summary New features per release
 
+= upcoming v0.12 =
+
+  * added IPv6Address.isMulticast method
+  * added IPv6Address.isLinkLocal method
+  * added IPv6Address.isSiteLocal method
+  * added IPv6Address.isIPv4Mapped method
+  * support IPv4-Mapped addresses in toString and fromString (e.g. ::ffff:192.168.0.1)
+
 = v0.11 =
 
   * construct IPv6Address from byte array
