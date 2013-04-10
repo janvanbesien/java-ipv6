@@ -282,7 +282,7 @@ public final class IPv6Address implements Comparable<IPv6Address>
      *
      * @return true if the address is an IPv4-mapped IPv6 addresses.
      */
-    public boolean isIPv4MappedAddress()
+    public boolean isIPv4Mapped()
     {
         return this.highBits == 0 // 64 zero bits
                 && (this.lowBits & 0xFFFF000000000000L) == 0 // 16 more zero bits
@@ -298,7 +298,7 @@ public final class IPv6Address implements Comparable<IPv6Address>
     @Override
     public String toString()
     {
-        if (isIPv4MappedAddress())
+        if (isIPv4Mapped())
             return toIPv4MappedAddressString();
         else
             return toShortHandNotationString();

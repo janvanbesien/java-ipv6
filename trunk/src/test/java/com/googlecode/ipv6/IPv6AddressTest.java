@@ -354,11 +354,11 @@ public class IPv6AddressTest
     @Test
     public void isIPv4Mapped()
     {
-        assertFalse(fromString("::").isIPv4MappedAddress());
-        assertFalse(fromString("::0001:ffff:1234:5678").isIPv4MappedAddress());
-        assertFalse(fromString("1::ffff:1234:5678").isIPv4MappedAddress());
-        assertFalse(fromString("::afff:1234:5678").isIPv4MappedAddress());
+        assertFalse(fromString("::").isIPv4Mapped());
+        assertFalse(fromString("::0001:ffff:1234:5678").isIPv4Mapped());
+        assertFalse(fromString("1::ffff:1234:5678").isIPv4Mapped());
+        assertFalse(fromString("::afff:1234:5678").isIPv4Mapped());
 
-        assertTrue(fromString("::ffff:1234:5678").isIPv4MappedAddress());
+        assertTrue(fromString("::ffff:1234:5678").isIPv4Mapped());
     }
 }
