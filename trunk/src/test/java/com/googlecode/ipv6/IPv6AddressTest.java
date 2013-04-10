@@ -360,5 +360,31 @@ public class IPv6AddressTest
         assertFalse(fromString("::afff:1234:5678").isIPv4Mapped());
 
         assertTrue(fromString("::ffff:1234:5678").isIPv4Mapped());
+        assertTrue(fromString("::ffff:192.168.123.123").isIPv4Mapped());
     }
+
+    @Test
+    public void isMulticast()
+    {
+        assertFalse(fromString("::").isMulticast());
+
+        assertTrue(fromString("ff12::ffff:1234:5678").isMulticast());
+    }
+
+    @Test
+    public void isLinkLocal()
+    {
+        assertFalse(fromString("::").isLinkLocal());
+
+        assertTrue(fromString("fe80::ffff:1234:5678").isLinkLocal());
+    }
+
+    @Test
+    public void isSiteLocal()
+    {
+        assertFalse(fromString("::").isSiteLocal());
+
+        assertTrue(fromString("fec0::ffff:1234:5678").isSiteLocal());
+    }
+
 }
