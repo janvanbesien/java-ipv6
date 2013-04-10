@@ -31,6 +31,7 @@ public class Examples
     public void ipAddressConstruction()
     {
         final IPv6Address iPv6Address = IPv6Address.fromString("fe80::226:2dff:fefa:cd1f");
+        final IPv6Address iPv4MappedIPv6Address = IPv6Address.fromString("::ffff:192.168.0.1");
     }
 
     @Test
