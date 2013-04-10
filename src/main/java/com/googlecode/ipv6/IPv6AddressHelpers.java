@@ -17,6 +17,7 @@
 package com.googlecode.ipv6;
 
 import java.util.Arrays;
+import java.util.regex.Pattern;
 
 /**
  * Helper methods used by IPv6Address.
@@ -90,6 +91,52 @@ public final class IPv6AddressHelpers
         }
     }
 
+    private static final Pattern DOT_DELIM = Pattern.compile("\\.");
+
+    /**
+     * Replaces a w.x.y.z substring at the end of the given string with corresponding hexadecimal notation. This is useful in case the
+     * string was using IPv4-Mapped address notation.
+     */
+    static String rewriteIPv4MappedNotation(String string)
+    {
+        if (!string.contains("."))
+        {
+            return string;
+        }
+        else
+        {
+            int lastColon = string.lastIndexOf(":");
+            String firstPart = string.substring(0, lastColon + 1);
+            String mappedIPv4Part = string.substring(lastColon + 1);
+
+            if (mappedIPv4Part.contains("."))
+            {
+                String[] dotSplits = DOT_DELIM.split(mappedIPv4Part);
+                if (dotSplits.length != 4)
+                    throw new IllegalArgumentException(String.format("can not parse [%s]", string));
+
+                StringBuilder rewrittenString = new StringBuilder();
+                rewrittenString.append(firstPart);
+                int byteZero = Integer.parseInt(dotSplits[0]);
+                int byteOne = Integer.parseInt(dotSplits[1]);
+                int byteTwo = Integer.parseInt(dotSplits[2]);
+                int byteThree = Integer.parseInt(dotSplits[3]);
+
+                rewrittenString.append(String.format("%02x", byteZero));
+                rewrittenString.append(String.format("%02x", byteOne));
+                rewrittenString.append(":");
+                rewrittenString.append(String.format("%02x", byteTwo));
+                rewrittenString.append(String.format("%02x", byteThree));
+
+                return rewrittenString.toString();
+            }
+            else
+            {
+                throw new IllegalArgumentException(String.format("can not parse [%s]", string));
+            }
+        }
+    }
+
     public static int countOccurrences(String haystack, char needle)
     {
         int count = 0;
@@ -112,11 +159,6 @@ public final class IPv6AddressHelpers
         }
 
         return builder.toString();
-    }
-
-    static boolean isZeroString(String string)
-    {
-        return "0".equals(string);
     }
 
     static boolean isLessThanUnsigned(long a, long b)

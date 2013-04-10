@@ -58,7 +58,7 @@ public final class IPv6Address implements Comparable<IPv6Address>
 
     /**
      * Create an IPv6 address from its String representation. For example "1234:5678:abcd:0000:9876:3210:ffff:ffff" or "2001::ff" or even
-     * "::".
+     * "::". IPv4-Mapped IPv6 addresses such as "::ffff:123.456.123.456" are also supported.
      *
      * @param string string representation
      * @return IPv6 address
@@ -68,7 +68,8 @@ public final class IPv6Address implements Comparable<IPv6Address>
         if (string == null)
             throw new IllegalArgumentException("can not parse [null]");
 
-        final String longNotation = IPv6AddressHelpers.expandShortNotation(string);
+        final String withoutIPv4MappedNotation = IPv6AddressHelpers.rewriteIPv4MappedNotation(string);
+        final String longNotation = IPv6AddressHelpers.expandShortNotation(withoutIPv4MappedNotation);
 
         final long[] longs = tryParseStringArrayIntoLongArray(string, longNotation);
 
@@ -289,10 +290,34 @@ public final class IPv6Address implements Comparable<IPv6Address>
     }
 
     /**
-     * @return String representation of the IPv6 address, using shorthand notation whenever possible.
+     * Returns a string representation of the IPv6 address. It will use shorthand notation and special notation for IPv4-mapped IPv6
+     * addresses whenever possible.
+     *
+     * @return String representation of the IPv6 address
      */
     @Override
     public String toString()
+    {
+        if (isIPv4MappedAddress())
+            return toIPv4MappedAddressString();
+        else
+            return toShortHandNotationString();
+    }
+
+    private String toIPv4MappedAddressString()
+    {
+        int byteZero = (int) ((this.lowBits & 0x00000000FF000000L) >> 24);
+        int byteOne = (int) ((this.lowBits & 0x0000000000FF0000L) >> 16);
+        int byteTwo = (int) ((this.lowBits & 0x000000000000FF00L) >> 8);
+        int byteThree = (int) ((this.lowBits & 0x00000000000000FFL));
+
+        final StringBuilder result = new StringBuilder("::ffff:");
+        result.append(byteZero).append(".").append(byteOne).append(".").append(byteTwo).append(".").append(byteThree);
+
+        return result.toString();
+    }
+
+    private String toShortHandNotationString()
     {
         final String[] strings = toArrayOfShortStrings();
 
