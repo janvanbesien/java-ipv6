@@ -67,6 +67,35 @@ public class IPv6AddressTest
     }
 
     @Test
+    public void parseSomeRealAddressesFromRFC5952()
+    {
+        assertEquals("::", fromString("::").toString());
+        assertEquals("1:2:3:4::", fromString("1:2:3:4::").toString());
+        assertEquals("::1:2:3:4", fromString("::1:2:3:4").toString());
+        assertEquals("1::2", fromString("1::2").toString());
+        assertEquals("::2", fromString("::2").toString());
+        assertEquals("1::", fromString("1::").toString());
+        assertEquals("a31:200:3abc::de4", fromString("0a31:0200:3AbC::0dE4").toString());
+        assertEquals("1::4:0:0:0", fromString("1:0:0:0:4:0:0:0").toString());
+
+        assertEquals("2001:db8::1", fromString("2001:db8::1").toString());
+        assertEquals("2001:db8::2:1", fromString("2001:db8:0:0:0:0:2:1").toString());
+        assertEquals("2001:db8:0:1:1:1:1:1", fromString("2001:db8:0:1:1:1:1:1").toString());
+        assertEquals("2001:db8::1:0:0:1", fromString("2001:db8::1:0:0:1").toString());
+        assertEquals("2001:0:0:1::1", fromString("2001:0:0:1:0:0:0:1").toString());
+
+        assertEquals("1:0:0:4::", fromString("1:0:0:4::").toString());
+    }
+
+    @Test
+    public void parseSomeRealIPv4MappedAddresses()
+    {
+        assertEquals("::ffff:0.0.0.1", fromString("::ffff:0.0.0.1").toString());
+        assertEquals("::ffff:192.168.139.50", fromString("::ffff:192.168.139.50").toString());
+        assertEquals("::ffff:192.168.139.50", fromString("::ffff:c0a8:8b32").toString());
+    }
+
+    @Test
     public void toLongStringOnSomeRealAddresses()
     {
         assertEquals("0000:0000:0000:0000:0000:0000:0000:0001", fromString("::1").toLongString());
@@ -75,27 +104,6 @@ public class IPv6AddressTest
         assertEquals("0000:0000:0000:0000:0000:0000:0000:ffff", fromString("::ffff").toLongString());
         assertEquals("ffff:0000:0000:0000:0000:0000:0000:0000", fromString("ffff::").toLongString());
         assertEquals("2001:0db8:85a3:0000:0000:8a2e:0370:7334", fromString("2001:db8:85a3::8a2e:370:7334").toLongString());
-    }
-
-    @Test
-    public void testToRFC5952String()
-    {
-        assertEquals("::", IPv6Address.fromString("::").toString());
-        assertEquals("1:2:3:4::", IPv6Address.fromString("1:2:3:4::").toString());
-        assertEquals("::1:2:3:4", IPv6Address.fromString("::1:2:3:4").toString());
-        assertEquals("1::2", IPv6Address.fromString("1::2").toString());
-        assertEquals("::2", IPv6Address.fromString("::2").toString());
-        assertEquals("1::", IPv6Address.fromString("1::").toString());
-        assertEquals("a31:200:3abc::de4", IPv6Address.fromString("0a31:0200:3AbC::0dE4").toString());
-        assertEquals("1::4:0:0:0", IPv6Address.fromString("1:0:0:0:4:0:0:0").toString());
-
-        assertEquals("2001:db8::1", IPv6Address.fromString("2001:db8::1").toString());
-        assertEquals("2001:db8::2:1", IPv6Address.fromString("2001:db8:0:0:0:0:2:1").toString());
-        assertEquals("2001:db8:0:1:1:1:1:1", IPv6Address.fromString("2001:db8:0:1:1:1:1:1").toString());
-        assertEquals("2001:db8::1:0:0:1", IPv6Address.fromString("2001:db8::1:0:0:1").toString());
-        assertEquals("2001:0:0:1::1", IPv6Address.fromString("2001:0:0:1:0:0:0:1").toString());
-
-        assertEquals("1:0:0:4::", IPv6Address.fromString("1:0:0:4::").toString());
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -156,7 +164,7 @@ public class IPv6AddressTest
     {
         assertArrayEquals(
                 new byte[]{0x00, 0x01, 0x00, 0x01, 0x00, 0x01, 0x00, 0x01, 0x00, 0x01, 0x00, 0x01, 0x00, 0x01, 0x00, 0x01},
-                IPv6Address.fromString("1:1:1:1:1:1:1:1").toByteArray());
+                fromString("1:1:1:1:1:1:1:1").toByteArray());
     }
 
     @Test
