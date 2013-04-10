@@ -276,6 +276,19 @@ public final class IPv6Address implements Comparable<IPv6Address>
     }
 
     /**
+     * Returns true if the address is an IPv4-mapped IPv6 address. In these addresses, the first 80 bits are zero, the next 16 bits are one,
+     * and the remaining 32 bits are the IPv4 address.
+     *
+     * @return true if the address is an IPv4-mapped IPv6 addresses.
+     */
+    public boolean isIPv4MappedAddress()
+    {
+        return this.highBits == 0 // 64 zero bits
+                && (this.lowBits & 0xFFFF000000000000L) == 0 // 16 more zero bits
+                && (this.lowBits & 0x0000FFFF00000000L) == 0x0000FFFF00000000L; // 16 one bits and the remainder is the IPv4 address
+    }
+
+    /**
      * @return String representation of the IPv6 address, using shorthand notation whenever possible.
      */
     @Override
