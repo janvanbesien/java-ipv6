@@ -294,7 +294,7 @@ public final class IPv6Address implements Comparable<IPv6Address>
      */
     public boolean isMulticast()
     {
-        return IPv6Network.fromString("ff00::/8").contains(this);
+        return IPv6Network.MULTICAST_NETWORK.contains(this);
     }
 
     /**
@@ -302,7 +302,7 @@ public final class IPv6Address implements Comparable<IPv6Address>
      */
     public boolean isSiteLocal()
     {
-        return IPv6Network.fromString("fec0::/48").contains(this);
+        return IPv6Network.SITE_LOCAL_NETWORK.contains(this);
     }
 
     /**
@@ -310,7 +310,7 @@ public final class IPv6Address implements Comparable<IPv6Address>
      */
     public boolean isLinkLocal()
     {
-        return IPv6Network.fromString("fe80::/64").contains(this);
+        return IPv6Network.LINK_LOCAL_NETWORK.contains(this);
     }
 
     /**
