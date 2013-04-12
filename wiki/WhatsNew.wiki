@@ -1,6 +1,6 @@
 #summary New features per release
 
-= upcoming v0.12 =
+= v0.12 =
 
   * added IPv6Address.isMulticast method
   * added IPv6Address.isLinkLocal method
