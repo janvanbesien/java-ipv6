@@ -24,6 +24,13 @@ package com.googlecode.ipv6;
  */
 public final class IPv6Network extends IPv6AddressRange
 {
+    public static final IPv6Network MULTICAST_NETWORK = fromString("ff00::/8");
+
+    public static final IPv6Network SITE_LOCAL_NETWORK = fromString("fec0::/48");
+
+    public static final IPv6Network LINK_LOCAL_NETWORK = fromString("fe80::/64");
+
+
     private final IPv6Address address;
 
     private final IPv6NetworkMask networkMask;
