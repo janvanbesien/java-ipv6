@@ -218,9 +218,15 @@ public class IPv6AddressRange implements Comparable<IPv6AddressRange>, Iterable<
         public IPv6Address next()
         {
             if (hasNext())
-                return current = current.add(1);
+            {
+                IPv6Address result = current;
+                current = current.add(1);
+                return result;
+            }
             else
+            {
                 throw new NoSuchElementException();
+            }
         }
 
         @Override
