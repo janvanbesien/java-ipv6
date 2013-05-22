@@ -18,6 +18,7 @@ package com.googlecode.ipv6;
 
 import org.junit.Test;
 
+import java.util.Iterator;
 import java.util.Random;
 
 import static com.googlecode.ipv6.IPv6Address.fromString;
@@ -108,5 +109,18 @@ public class IPv6NetworkTest
 
         assertTrue(IPv6Network.fromString("::/0").contains(randomAddress));
         assertTrue(IPv6Network.fromString("abcd:effe:dcba::/0").contains(randomAddress));
+    }
+
+    @Test
+    public void iteratorShouldStartWithFirstAndEndWithLast()
+    {
+        IPv6Network ipv6Network = IPv6Network.fromString("ffff:ffff:ffff:ffff:ffff:ffff:ffff:0000/126");
+        Iterator<IPv6Address> iterator = ipv6Network.iterator();
+        int i = 0;
+        for (; iterator.hasNext(); i++)
+        {
+            assertEquals(IPv6Address.fromString("ffff:ffff:ffff:ffff:ffff:ffff:ffff:000" + i), iterator.next());
+        }
+        assertEquals(4, i);
     }
 }
