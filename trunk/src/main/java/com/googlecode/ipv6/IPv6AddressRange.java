@@ -16,6 +16,7 @@
 
 package com.googlecode.ipv6;
 
+import java.math.BigInteger;
 import java.util.*;
 
 /**
@@ -65,6 +66,15 @@ public class IPv6AddressRange implements Comparable<IPv6AddressRange>, Iterable<
     public Iterator<IPv6Address> iterator()
     {
         return new Ipv6AddressRangeIterator();
+    }
+
+    public BigInteger size()
+    {
+        BigInteger firstAsBigInteger = new BigInteger(1, first.toByteArray());
+        BigInteger lastAsBigInteger = new BigInteger(1, last.toByteArray());
+
+        // note that first and last are included in the range.
+        return lastAsBigInteger.subtract(firstAsBigInteger).add(BigInteger.ONE);
     }
 
     /**
