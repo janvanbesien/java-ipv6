@@ -73,14 +73,14 @@ public class Examples
     }
 
     @Test
-    public void ipNetworkInCidrNotation()
+    public void ipNetworkNotationChoices()
     {
-        IPv6Network networkA = IPv6Network.fromString("::1/16");
-        IPv6Network networkB =
+        IPv6Network prefixLengthNotation = IPv6Network.fromString("::1/16");
+        IPv6Network addressNotation =
                 IPv6Network.fromAddressAndMask(IPv6Address.fromString("::"), IPv6NetworkMask.fromAddress(IPv6Address.fromString("ffff::")));
-        System.out.println(networkA.equals(networkB)); // prints true
-        System.out.println(networkA); // prints ::/16
-        System.out.println(networkA.getFirst() + "/" + networkA.getNetmask().asAddress()); // prints ::/ffff::
+        System.out.println(prefixLengthNotation.equals(addressNotation)); // prints true
+        System.out.println(prefixLengthNotation); // prints ::/16
+        System.out.println(prefixLengthNotation.getFirst() + "/" + prefixLengthNotation.getNetmask().asAddress()); // prints ::/ffff::
     }
 
     @Test(expected = IllegalArgumentException.class)
