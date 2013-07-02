@@ -72,6 +72,17 @@ public class Examples
         System.out.println(strangeNetwork.getNetmask().asAddress()); // prints ffff:ffff:ffe0::
     }
 
+    @Test
+    public void ipNetworkInCidrNotation()
+    {
+        IPv6Network networkA = IPv6Network.fromString("::1/16");
+        IPv6Network networkB =
+                IPv6Network.fromAddressAndMask(IPv6Address.fromString("::"), IPv6NetworkMask.fromAddress(IPv6Address.fromString("ffff::")));
+        System.out.println(networkA.equals(networkB)); // prints true
+        System.out.println(networkA); // prints ::/16
+        System.out.println(networkA.getFirst() + "/" + networkA.getNetmask().asAddress()); // prints ::/ffff::
+    }
+
     @Test(expected = IllegalArgumentException.class)
     public void ipNetworkMaskConstruction()
     {
