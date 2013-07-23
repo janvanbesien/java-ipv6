@@ -19,6 +19,8 @@ package com.googlecode.ipv6.examples;
 import com.googlecode.ipv6.*;
 import org.junit.Test;
 
+import java.util.Iterator;
+
 /**
  * Some examples also featured in the online documentation. This class is in a separate package on purpose, such that we make sure only to
  * call methods of the public API.
@@ -70,6 +72,18 @@ public class Examples
         System.out.println(strangeNetwork.getLast()); // prints fe80:0:1f:ffff:ffff:ffff:ffff:ffff
         System.out.println(strangeNetwork.getNetmask().asPrefixLength()); // prints 43
         System.out.println(strangeNetwork.getNetmask().asAddress()); // prints ffff:ffff:ffe0::
+    }
+
+    @Test
+    public void ipNetworkSubnetCalculation()
+    {
+        final IPv6Network network = IPv6Network.fromString("1:2:3:4:5:6:7:0/120");
+
+        Iterator<IPv6Network> splits = network.split(IPv6NetworkMask.fromPrefixLength(124));
+        while (splits.hasNext())
+            System.out.println(splits.next());
+
+        // prints 1:2:3:4:5:6:7:0/124, 1:2:3:4:5:6:7:10/124, 1:2:3:4:5:6:7:20/124, ... until 1:2:3:4:5:6:7:f0/124 (16 in total)
     }
 
     @Test
