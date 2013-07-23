@@ -165,4 +165,11 @@ public final class IPv6AddressHelpers
     {
         return (a < b) ^ ((a < 0) != (b < 0));
     }
+
+    static byte[] prefixWithZeroBytes(byte[] original, int newSize)
+    {
+        byte[] target = new byte[newSize];
+        System.arraycopy(original, 0, target, newSize - original.length, original.length);
+        return target;
+    }
 }
