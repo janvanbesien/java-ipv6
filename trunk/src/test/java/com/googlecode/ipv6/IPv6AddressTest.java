@@ -265,6 +265,17 @@ public class IPv6AddressTest
     }
 
     @Test
+    public void setBit()
+    {
+        assertEquals(fromString("::1"), fromString("::").setBit(0));
+        assertEquals(fromString("::2"), fromString("::").setBit(1));
+        assertEquals(fromString("::3"), fromString("::").setBit(0).setBit(1));
+
+        assertEquals(fromString("0:0:0:1::"), fromString("::").setBit(64));
+        assertEquals(fromString("0:0:0:2::"), fromString("::").setBit(65));
+    }
+
+    @Test
     public void compare()
     {
         assertTrue(0 == fromString("::").compareTo(fromString("::")));

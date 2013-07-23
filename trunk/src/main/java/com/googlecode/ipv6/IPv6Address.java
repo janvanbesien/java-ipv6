@@ -277,6 +277,27 @@ public final class IPv6Address implements Comparable<IPv6Address>
     }
 
     /**
+     * Set a bit in the address.
+     *
+     * @param bit to set (in the range [0, 127])
+     * @return an address with the given bit set
+     */
+    public IPv6Address setBit(final int bit)
+    {
+        if (bit < 0 || bit > 127)
+            throw new IllegalArgumentException("can only set bits in the interval [0, 127]");
+
+        if (bit < 64)
+        {
+            return new IPv6Address(this.highBits, this.lowBits | (1 << bit));
+        }
+        else
+        {
+            return new IPv6Address(this.highBits | (1 << (bit - 64)), this.lowBits);
+        }
+    }
+
+    /**
      * Returns true if the address is an IPv4-mapped IPv6 address. In these addresses, the first 80 bits are zero, the next 16 bits are one,
      * and the remaining 32 bits are the IPv4 address.
      *
