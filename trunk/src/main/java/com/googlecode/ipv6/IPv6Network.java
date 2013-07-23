@@ -16,6 +16,10 @@
 
 package com.googlecode.ipv6;
 
+import java.math.BigInteger;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+
 /**
  * Immutable representation of an IPv6 network based on an address and a prefix length. An IPv6 network is also an IPv6 address range (but
  * not all ranges are valid networks).
@@ -111,6 +115,22 @@ public final class IPv6Network extends IPv6AddressRange
         }
     }
 
+    /**
+     * Split a network in smaller subnets of a given size.
+     *
+     * @param size size (expressed as {@link com.googlecode.ipv6.IPv6NetworkMask}) of the subnets
+     * @return iterator of the splitted subnets.
+     * @throws IllegalArgumentException if the requested size is bigger than the original size
+     */
+    public Iterator<IPv6Network> split(IPv6NetworkMask size)
+    {
+        if (size.asPrefixLength() < this.getNetmask().asPrefixLength())
+            throw new IllegalArgumentException(String.format("Can not split a network of size %s in subnets of larger size %s",
+                                                             this.getNetmask().asPrefixLength(), size.asPrefixLength()));
+
+        return new IPv6NetworkSplitsIterator(size);
+    }
+
     @Override
     public String toString()
     {
@@ -152,5 +172,54 @@ public final class IPv6Network extends IPv6AddressRange
     public IPv6NetworkMask getNetmask()
     {
         return networkMask;
+    }
+
+    private final class IPv6NetworkSplitsIterator implements Iterator<IPv6Network>
+    {
+        private final IPv6NetworkMask size;
+
+        private IPv6Network current;
+
+        private BigInteger nbrAddressesPerSplit;
+
+        public IPv6NetworkSplitsIterator(IPv6NetworkMask size)
+        {
+            this.size = size;
+            this.nbrAddressesPerSplit = BigInteger.ONE.shiftLeft(128 - size.asPrefixLength());
+            this.current = IPv6Network.fromAddressAndMask(IPv6Network.this.address, size);
+        }
+
+        @Override
+        public boolean hasNext()
+        {
+            return current.getLast().compareTo(IPv6Network.this.getLast()) <= 0;
+        }
+
+        @Override
+        public IPv6Network next()
+        {
+            if (hasNext())
+            {
+                IPv6Network result = current;
+                current = calculateNext(current);
+                return result;
+            }
+            else
+            {
+                throw new NoSuchElementException();
+            }
+        }
+
+        private IPv6Network calculateNext(IPv6Network current)
+        {
+            BigInteger next = current.address.toBigInteger().add(nbrAddressesPerSplit);
+            return IPv6Network.fromAddressAndMask(IPv6Address.fromBigInteger(next), size);
+        }
+
+        @Override
+        public void remove()
+        {
+            throw new UnsupportedOperationException("This iterator provides read only access");
+        }
     }
 }

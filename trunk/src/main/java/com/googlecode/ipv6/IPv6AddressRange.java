@@ -242,7 +242,7 @@ public class IPv6AddressRange implements Comparable<IPv6AddressRange>, Iterable<
         @Override
         public void remove()
         {
-            IPv6AddressRange.this.remove(current);
+            throw new UnsupportedOperationException("This iterator provides read only access");
         }
     }
 }

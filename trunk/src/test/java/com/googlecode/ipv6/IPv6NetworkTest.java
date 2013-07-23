@@ -123,4 +123,68 @@ public class IPv6NetworkTest
         }
         assertEquals(4, i);
     }
+
+    @Test
+    public void split()
+    {
+        {
+            IPv6Network slash120 = IPv6Network.fromString("::ffff:192.168.123.0/120");
+            Iterator<IPv6Network> splits = slash120.split(IPv6NetworkMask.fromPrefixLength(121));
+            verifySplits(splits, 2, IPv6Network.fromString("::ffff:192.168.123.0/121"),
+                         IPv6Network.fromString("::ffff:192.168.123.128/121"));
+        }
+
+        {
+            IPv6Network slash30 = IPv6Network.fromString("a:b:c:d:1:2:3:4/30"); // a:8:: is the host address after masking with /30
+            Iterator<IPv6Network> splits = slash30.split(IPv6NetworkMask.fromPrefixLength(40));
+            verifySplits(splits, (int) Math.pow(2, 40 - 30),
+                         IPv6Network.fromString("a:8::/40"),
+                         IPv6Network.fromString("a:8:100::/40"),
+                         IPv6Network.fromString("a:8:200::/40"));
+        }
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void splitInLargerSize()
+    {
+        IPv6Network ipv6Network = IPv6Network.fromString("1:2:3:4:5:6:7:8/69");
+        ipv6Network.split(IPv6NetworkMask.fromPrefixLength(68)); // 68 subnet is bigger than 69
+    }
+
+    @Test
+    public void splitInSameSize()
+    {
+        IPv6Network ipv6Network = IPv6Network.fromString("1:2:3:4:5:6:7:8/69");
+        Iterator<IPv6Network> splits = ipv6Network.split(IPv6NetworkMask.fromPrefixLength(69));
+        verifySplits(splits, 1, ipv6Network);
+    }
+
+    /**
+     * Verify a splitted network.
+     *
+     * @param splits         splits to verify
+     * @param expectedNbr    number of expected splits
+     * @param expectedSplits the first splits in the list to expect (check as many as you want but no need to check them all)
+     */
+    private void verifySplits(Iterator<IPv6Network> splits, int expectedNbr, IPv6Network... expectedSplits)
+    {
+        int nChecked = 0;
+
+        // check the ones that are explicitely passed
+        for (IPv6Network expectedSplit : expectedSplits)
+        {
+            assertEquals(expectedSplit, splits.next());
+            nChecked++;
+        }
+
+        // merely check count for the others
+        while (splits.hasNext())
+        {
+            splits.next();
+            nChecked++;
+        }
+
+        assertEquals(expectedNbr, nChecked);
+    }
+
 }

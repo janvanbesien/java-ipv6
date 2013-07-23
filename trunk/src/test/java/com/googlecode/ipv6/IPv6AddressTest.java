@@ -18,6 +18,7 @@ package com.googlecode.ipv6;
 
 import org.junit.Test;
 
+import java.math.BigInteger;
 import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -180,6 +181,31 @@ public class IPv6AddressTest
 
             final IPv6Address address = IPv6Address.fromByteArray(randomBytes);
             assertArrayEquals(randomBytes, address.toByteArray());
+        }
+    }
+
+    @Test
+    public void convertToBigInteger() throws UnknownHostException
+    {
+        assertEquals(BigInteger.ONE.shiftLeft(128).subtract(BigInteger.ONE), IPv6Address.MAX.toBigInteger());
+        assertEquals(BigInteger.ONE.shiftLeft(128).subtract(BigInteger.valueOf(16)),
+                     fromString("ffff:ffff:ffff:ffff:ffff:ffff:ffff:fff0").toBigInteger());
+    }
+
+    @Test
+    public void convertToAndFromBigInteger()
+    {
+        final int nTests = 10000;
+        final Random rg = new Random();
+
+        for (int i = 0; i < nTests; i++)
+        {
+            byte[] randomBytes = new byte[16];
+            rg.nextBytes(randomBytes);
+            BigInteger randomBigInteger = new BigInteger(1, randomBytes);
+
+            final IPv6Address address = IPv6Address.fromBigInteger(randomBigInteger);
+            assertEquals(randomBigInteger, address.toBigInteger());
         }
     }
 

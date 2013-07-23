@@ -16,11 +16,15 @@
 
 package com.googlecode.ipv6;
 
+import java.math.BigInteger;
 import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.nio.LongBuffer;
+import java.util.Arrays;
+
+import static com.googlecode.ipv6.IPv6AddressHelpers.prefixWithZeroBytes;
 
 /**
  * Immutable representation of an IPv6 address.
@@ -32,6 +36,8 @@ public final class IPv6Address implements Comparable<IPv6Address>
     private static final int N_SHORTS = 8;
 
     private static final int N_BYTES = 16;
+
+    public static final IPv6Address MAX = IPv6Address.fromString("ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff");
 
     private final long highBits;
 
@@ -111,7 +117,7 @@ public final class IPv6Address implements Comparable<IPv6Address>
     /**
      * Create an IPv6 address from a byte array.
      *
-     * @param bytes byte array with 16 bytes
+     * @param bytes byte array with 16 bytes (interpreted unsigned)
      * @return IPv6 address
      */
     public static IPv6Address fromByteArray(final byte[] bytes)
@@ -132,10 +138,51 @@ public final class IPv6Address implements Comparable<IPv6Address>
         return new IPv6Address(longBuffer.get(), longBuffer.get());
     }
 
+    /**
+     * @return byte[] representation
+     */
     public byte[] toByteArray()
     {
         ByteBuffer byteBuffer = ByteBuffer.allocate(N_BYTES).putLong(highBits).putLong(lowBits);
         return byteBuffer.array();
+    }
+
+    /**
+     * Create an IPv6 address from a (positive) {@link java.math.BigInteger}. The magnitude of the {@link java.math.BigInteger} represents
+     * the IPv6 address value. Or in other words, the {@link java.math.BigInteger} with value N defines the Nth possible IPv6 address.
+     *
+     * @param bigInteger {@link java.math.BigInteger} value
+     * @return IPv6 address
+     */
+    public static IPv6Address fromBigInteger(final BigInteger bigInteger)
+    {
+        if (bigInteger == null)
+            throw new IllegalArgumentException("can not construct from [null]");
+        if (bigInteger.compareTo(BigInteger.ZERO) < 0)
+            throw new IllegalArgumentException("can not construct from negative value");
+        if (bigInteger.compareTo(MAX.toBigInteger()) > 0)
+            throw new IllegalArgumentException("bigInteger represents a value bigger than 2^128 - 1");
+
+        byte[] bytes = bigInteger.toByteArray();
+
+        if (bytes[0] == 0)
+        {
+            // a zero byte was added to represent the (always positive, hence zero) sign bit
+            return fromByteArray(prefixWithZeroBytes(Arrays.copyOfRange(bytes, 1, bytes.length), N_BYTES));
+        }
+        else
+        {
+            return fromByteArray(prefixWithZeroBytes(bytes, N_BYTES));
+        }
+    }
+
+    /**
+     * @return {@link java.math.BigInteger} representation. The magnitude of the {@link java.math.BigInteger} represents the IPv6 address
+     *         value. Or in other words, the {@link java.math.BigInteger} with value N defines the Nth possible IPv6 address.
+     */
+    public BigInteger toBigInteger()
+    {
+        return new BigInteger(1, toByteArray());
     }
 
     /**
