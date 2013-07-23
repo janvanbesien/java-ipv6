@@ -2,7 +2,7 @@
 
 = v0.12 =
 
-  * ISSUE-7
+  * bugfix for [https://code.google.com/p/java-ipv6/issues/detail?id=7 ISSUE-7]
 
 = v0.12 =
 
