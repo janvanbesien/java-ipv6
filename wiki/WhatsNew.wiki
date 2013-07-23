@@ -2,6 +2,10 @@
 
 = v0.12 =
 
+  * ISSUE-7
+
+= v0.12 =
+
   * added IPv6Address.isMulticast method
   * added IPv6Address.isLinkLocal method
   * added IPv6Address.isSiteLocal method
