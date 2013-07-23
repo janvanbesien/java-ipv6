@@ -1,11 +1,11 @@
 #summary New features per release
 
-= v0.13 =
+= v0.14 =
 
   * IPv6AddressRange.size() method added, see [https://code.google.com/p/java-ipv6/issues/detail?id=8 ISSUE-8]
   * new feature: split IPv6Network in smaller subnets, see [https://code.google.com/p/java-ipv6/issues/detail?id=10 ISSUE-10]
 
-= v0.12 =
+= v0.13 =
 
   * bugfix for [https://code.google.com/p/java-ipv6/issues/detail?id=7 ISSUE-7]
 
