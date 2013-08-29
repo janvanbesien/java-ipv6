@@ -16,10 +16,14 @@
 
 package com.googlecode.ipv6;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import junit.framework.Assert;
 import org.junit.Test;
 
 import java.math.BigInteger;
+import java.util.Iterator;
+import java.util.List;
 
 import static com.googlecode.ipv6.IPv6Address.fromString;
 import static com.googlecode.ipv6.IPv6AddressRange.fromFirstAndLast;
@@ -143,6 +147,118 @@ public class IPv6AddressRangeTest
         assertEquals(BigInteger.valueOf(131074), fromFirstAndLast(fromString("::1:2:3:4"), fromString("::1:2:5:5")).size());
         assertEquals(BigInteger.valueOf(2).pow(128),
                      fromFirstAndLast(fromString("::"), fromString("ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff")).size());
+    }
+
+    @Test
+    public void subnets_alreadyANetwork()
+    {
+        // testrange is already a network
+        IPv6AddressRange testRange = fromFirstAndLast(fromString("::ffff:10.0.0.0"), fromString("::ffff:10.0.0.255"));
+        List<IPv6Network> expected = ImmutableList.of(IPv6Network.fromString("::ffff:10.0.0.0/120"));
+        assertEquals(expected, Lists.newArrayList(testRange.toSubnets()));
+        checkSubnetsSameAsRange(testRange.toSubnets(), testRange);
+    }
+
+    @Test
+    public void subnets_smallTest1()
+    {
+        IPv6AddressRange testRange = fromFirstAndLast(fromString("::ffff:0.0.0.3"), fromString("::ffff:0.0.0.17"));
+        List<IPv6Network> expected = ImmutableList.of(IPv6Network.fromString("::ffff:0.0.0.3/128"),
+                                                      IPv6Network.fromString("::ffff:0.0.0.4/126"),
+                                                      IPv6Network.fromString("::ffff:0.0.0.8/125"),
+                                                      IPv6Network.fromString("::ffff:0.0.0.17/127"));
+        assertEquals(expected, Lists.newArrayList(testRange.toSubnets()));
+        checkSubnetsSameAsRange(testRange.toSubnets(), testRange);
+    }
+
+    @Test
+    public void subnets_smallTest2()
+    {
+        IPv6AddressRange testRange = fromFirstAndLast(fromString("::ffff:192.168.0.3"), fromString("::ffff:192.168.0.17"));
+        List<IPv6Network> expected = ImmutableList.of(IPv6Network.fromString("::ffff:192.168.0.3/128"),
+                                                      IPv6Network.fromString("::ffff:192.168.0.4/126"),
+                                                      IPv6Network.fromString("::ffff:192.168.0.8/125"),
+                                                      IPv6Network.fromString("::ffff:192.168.0.17/127"));
+        assertEquals(expected, Lists.newArrayList(testRange.toSubnets()));
+        checkSubnetsSameAsRange(testRange.toSubnets(), testRange);
+    }
+
+    @Test
+    public void subnets_smallTest3()
+    {
+        IPv6AddressRange testRange = fromFirstAndLast(fromString("::ffff:192.168.1.250"), fromString("::ffff:192.168.2.2"));
+        List<IPv6Network> expected = ImmutableList.of(IPv6Network.fromString("::ffff:192.168.1.250/127"),
+                                                      IPv6Network.fromString("::ffff:192.168.1.252/126"),
+                                                      IPv6Network.fromString("::ffff:192.168.2.0/127"),
+                                                      IPv6Network.fromString("::ffff:192.168.2.2/128"));
+        assertEquals(expected, Lists.newArrayList(testRange.toSubnets()));
+        checkSubnetsSameAsRange(testRange.toSubnets(), testRange);
+    }
+
+    @Test
+    public void subnets_smallTest4()
+    {
+        IPv6AddressRange testRange = fromFirstAndLast(fromString("::ffff:192.3.1.250"), fromString("::ffff:192.168.2.2"));
+        List<IPv6Network> expected = ImmutableList.of(IPv6Network.fromString("::ffff:192.3.1.250/127"),
+                                                      IPv6Network.fromString("::ffff:192.3.1.252/126"),
+                                                      IPv6Network.fromString("::ffff:192.3.2.0/119"),
+                                                      IPv6Network.fromString("::ffff:192.3.4.0/118"),
+                                                      IPv6Network.fromString("::ffff:192.3.8.0/117"),
+                                                      IPv6Network.fromString("::ffff:192.3.16.0/116"),
+                                                      IPv6Network.fromString("::ffff:192.3.32.0/115"),
+                                                      IPv6Network.fromString("::ffff:192.3.64.0/114"),
+                                                      IPv6Network.fromString("::ffff:192.3.128.0/113"),
+                                                      IPv6Network.fromString("::ffff:192.4.0.0/110"),
+                                                      IPv6Network.fromString("::ffff:192.8.0.0/109"),
+                                                      IPv6Network.fromString("::ffff:192.16.0.0/108"),
+                                                      IPv6Network.fromString("::ffff:192.32.0.0/107"),
+                                                      IPv6Network.fromString("::ffff:192.64.0.0/106"),
+                                                      IPv6Network.fromString("::ffff:192.128.0.0/107"),
+                                                      IPv6Network.fromString("::ffff:192.160.0.0/109"),
+                                                      IPv6Network.fromString("::ffff:192.168.0.0/119"),
+                                                      IPv6Network.fromString("::ffff:192.168.2.0/127"),
+                                                      IPv6Network.fromString("::ffff:192.168.2.2/128"));
+        assertEquals(expected, Lists.newArrayList(testRange.toSubnets()));
+        checkSubnetsSameAsRange(testRange.toSubnets(), testRange);
+    }
+
+    @Test
+    public void subnets_largeTest1()
+    {
+        IPv6AddressRange testRange = fromFirstAndLast(fromString("a:b:c:d::"),
+                                                      fromString("a:b:c:e::"));
+        checkSubnetsSameAsRange(testRange.toSubnets(), testRange);
+    }
+
+    @Test
+    public void subnets_largeTestAlreadyANetwork()
+    {
+        IPv6AddressRange testRange = fromFirstAndLast(fromString("a:b:c:c::"), fromString("a:b:c:f:ffff:ffff:ffff:ffff"));
+        IPv6Network network = IPv6Network.fromTwoAddresses(testRange.getFirst(), testRange.getLast());
+        assertEquals(testRange, network); // just to prove that the range is already a network
+        checkSubnetsSameAsRange(testRange.toSubnets(), testRange);
+    }
+
+    /**
+     * Check that a given list of subnets denotes exactly the same addresses as a given range.
+     */
+    private void checkSubnetsSameAsRange(Iterator<IPv6Network> subnets, IPv6AddressRange range)
+    {
+        IPv6Network current = subnets.next();
+
+        // first
+        assertEquals(range.getFirst(), current.getFirst());
+
+        // networks should be non overlapping and consecutive
+        while (subnets.hasNext())
+        {
+            IPv6Network prev = current;
+            current = subnets.next();
+            assertEquals(prev.getLast().add(1), current.getFirst());
+        }
+
+        // last
+        assertEquals(range.getLast(), current.getLast());
     }
 
 }
