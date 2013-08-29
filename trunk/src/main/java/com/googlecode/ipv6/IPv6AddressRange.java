@@ -65,9 +65,12 @@ public class IPv6AddressRange implements Comparable<IPv6AddressRange>, Iterable<
     @Override
     public Iterator<IPv6Address> iterator()
     {
-        return new Ipv6AddressRangeIterator();
+        return new IPv6AddressRangeIterator();
     }
 
+    /**
+     * @return number of addresses in the range
+     */
     public BigInteger size()
     {
         BigInteger firstAsBigInteger = new BigInteger(1, first.toByteArray());
@@ -75,6 +78,17 @@ public class IPv6AddressRange implements Comparable<IPv6AddressRange>, Iterable<
 
         // note that first and last are included in the range.
         return lastAsBigInteger.subtract(firstAsBigInteger).add(BigInteger.ONE);
+    }
+
+    /**
+     * Deaggregate a range of IPv6 addresses (which is not necessarily aligned with a single IPv6 network) into a minimal set of non
+     * overlapping consecutive subnets.
+     *
+     * @return iterator of IPv6 networks that all together define the minimal set of subnets by which the range can be represented.
+     */
+    public Iterator<IPv6Network> toSubnets()
+    {
+        return new IPv6AddressRangeAsSubnetsIterator();
     }
 
     /**
@@ -214,7 +228,7 @@ public class IPv6AddressRange implements Comparable<IPv6AddressRange>, Iterable<
     /**
      * @see IPv6AddressRange#iterator()
      */
-    private final class Ipv6AddressRangeIterator implements Iterator<IPv6Address>
+    private final class IPv6AddressRangeIterator implements Iterator<IPv6Address>
     {
         private IPv6Address current = first;
 
@@ -237,6 +251,60 @@ public class IPv6AddressRange implements Comparable<IPv6AddressRange>, Iterable<
             {
                 throw new NoSuchElementException();
             }
+        }
+
+        @Override
+        public void remove()
+        {
+            throw new UnsupportedOperationException("This iterator provides read only access");
+        }
+    }
+
+    private class IPv6AddressRangeAsSubnetsIterator implements Iterator<IPv6Network>
+    {
+
+        private IPv6Address base = first;
+        private IPv6Network next;
+
+        @Override
+        public IPv6Network next()
+        {
+            int step;
+
+            if (hasNext())
+            {
+                step = 0;
+
+                // try setting the step-th bit until we reach a bit that is already set
+                while (!(base.setBit(step)).equals(base))
+                {
+                    // if the max address in this subnet is beyond the end of the range, we went too far
+                    if ((base.maximumAddressWithNetworkMask(IPv6NetworkMask.fromPrefixLength(127 - step)).compareTo(last) > 0))
+                    {
+                        break;
+                    }
+                    step++;
+                }
+
+                // the next subnet is found
+                next = IPv6Network.fromAddressAndMask(base, IPv6NetworkMask.fromPrefixLength(128 - step));
+
+                // start the next loop after the end of the subnet just found
+                base = next.getLast().add(1);
+            }
+            else
+            {
+                throw new NoSuchElementException();
+            }
+
+            return next;
+        }
+
+        @Override
+        public boolean hasNext()
+        {
+            // there is a next subnet as long as we didn't reach the end of the range
+            return (base.compareTo(last) <= 0);
         }
 
         @Override

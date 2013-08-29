@@ -55,6 +55,19 @@ public class Examples
     }
 
     @Test
+    public void ipAddressRangeConvertToSubnets()
+    {
+        final IPv6AddressRange range = IPv6AddressRange.fromFirstAndLast(IPv6Address.fromString("::1:ffcc"),
+                                                                         IPv6Address.fromString("::2:0"));
+
+        Iterator<IPv6Network> subnetsIterator = range.toSubnets();
+        while (subnetsIterator.hasNext())
+            System.out.println(subnetsIterator.next());
+
+        // prints ::1:ffcc/126 ::1:ffd0/124 ::1:ffe0/123 ::2:0/128 (i.e. the minimal set of networks that define the original range)
+    }
+
+    @Test
     public void ipNetworkConstruction()
     {
         final IPv6AddressRange range = IPv6AddressRange.fromFirstAndLast(IPv6Address.fromString("fe80::226:2dff:fefa:0"),
@@ -75,7 +88,7 @@ public class Examples
     }
 
     @Test
-    public void ipNetworkSubnetCalculation()
+    public void ipNetworkSplitInSmallerSubnets()
     {
         final IPv6Network network = IPv6Network.fromString("1:2:3:4:5:6:7:0/120");
 
