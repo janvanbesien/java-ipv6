@@ -374,7 +374,7 @@ public final class IPv6Address implements Comparable<IPv6Address>
     }
 
     /**
-     * @return true if the address is an IPv6 link-local address (an address in the network fe80::/48)
+     * @return true if the address is an IPv6 link-local address (an address in the network fe80::/64)
      */
     public boolean isLinkLocal()
     {
