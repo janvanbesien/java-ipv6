@@ -336,11 +336,11 @@ public final class IPv6Address implements Comparable<IPv6Address>
 
         if (bit < 64)
         {
-            return new IPv6Address(this.highBits, this.lowBits | (1 << bit));
+            return new IPv6Address(this.highBits, this.lowBits | (1L << bit));
         }
         else
         {
-            return new IPv6Address(this.highBits | (1 << (bit - 64)), this.lowBits);
+            return new IPv6Address(this.highBits | (1L << (bit - 64)), this.lowBits);
         }
     }
 
