@@ -299,6 +299,7 @@ public class IPv6AddressTest
 
         assertEquals(fromString("0:0:0:1::"), fromString("::").setBit(64));
         assertEquals(fromString("0:0:0:2::"), fromString("::").setBit(65));
+        assertEquals(fromString("8000::"), fromString("::").setBit(127));
     }
 
     @Test
