@@ -106,7 +106,7 @@ public final class IPv6Address implements Comparable<IPv6Address>
         if (inetAddress == null)
             throw new IllegalArgumentException("can not construct from [null]");
 
-        return fromString(inetAddress.getHostAddress());
+        return fromByteArray(inetAddress.getAddress());
     }
 
     public InetAddress toInetAddress() throws UnknownHostException

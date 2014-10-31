@@ -145,6 +145,14 @@ public class IPv6AddressTest
     }
 
     @Test
+    public void constructFromInet6AddressWithScopeId() throws UnknownHostException
+    {
+        byte[] bytes = fromString("2001:db8:85a3::8a2e:370:7334").toByteArray();
+        final InetAddress inetAddress = Inet6Address.getByAddress("host", bytes, 12);
+        assertEquals("2001:db8:85a3::8a2e:370:7334", fromInetAddress(inetAddress).toString());
+    }
+
+    @Test
     public void convertToInet6Address() throws UnknownHostException
     {
         final InetAddress inetAddress = Inet6Address.getByName("2001:0db8:85a3:0000:0000:8a2e:0370:7334");
