@@ -16,9 +16,9 @@
 
 package com.googlecode.ipv6;
 
-import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
 
 /**
  * @author Jan Van Besien
@@ -53,6 +53,16 @@ public class IPv6NetworkMaskTest
     public void constructInvalidFromAddress()
     {
         IPv6NetworkMask.fromAddress(new IPv6Address(123L, 456L));
+    }
+
+    @Test
+    public void asAddress()
+    {
+        for (int i = 0; i <= 128; i++)
+        {
+            IPv6NetworkMask mask = IPv6NetworkMask.fromPrefixLength(i);
+            assertEquals("failure for prefix length " + i, i, IPv6NetworkMask.fromAddress(mask.asAddress()).asPrefixLength());
+        }
     }
 
 }

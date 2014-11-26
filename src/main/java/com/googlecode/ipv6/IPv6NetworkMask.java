@@ -16,9 +16,9 @@
 
 package com.googlecode.ipv6;
 
-import java.util.BitSet;
-
 import static com.googlecode.ipv6.BitSetHelpers.bitSetOf;
+
+import java.util.BitSet;
 
 /**
  * Immutable representation of an IPv6 network mask. A network mask is nothing more than an IPv6 address with a continuous range of 1 bits
@@ -71,26 +71,19 @@ public final class IPv6NetworkMask
     private static void validateNetworkMask(IPv6Address addressToValidate)
     {
         final BitSet addressAsBitSet = bitSetOf(addressToValidate.getLowBits(), addressToValidate.getHighBits());
-        if (!addressAsBitSet.get(127))
+        boolean firstZeroFound = false;
+        for (int i = 127; i >= 0 && !firstZeroFound; i--)
         {
-            throw new IllegalArgumentException(addressToValidate + " is not a valid network mask");
-        }
-        else
-        {
-            boolean firstZeroFound = false;
-            for (int i = 127; i >= 0 && !firstZeroFound; i--)
+            if (!addressAsBitSet.get(i))
             {
-                if (!addressAsBitSet.get(i))
-                {
-                    firstZeroFound = true;
+                firstZeroFound = true;
 
-                    // a zero -> all the others should also be zero
-                    for (int j = i - 1; j >= 0; j--)
+                // a zero -> all the others should also be zero
+                for (int j = i - 1; j >= 0; j--)
+                {
+                    if (addressAsBitSet.get(j))
                     {
-                        if (addressAsBitSet.get(j))
-                        {
-                            throw new IllegalArgumentException(addressToValidate + " is not a valid network mask");
-                        }
+                        throw new IllegalArgumentException(addressToValidate + " is not a valid network mask");
                     }
                 }
             }
@@ -116,6 +109,10 @@ public final class IPv6NetworkMask
         {
             final int remainingPrefixLength = prefixLength - 64;
             return new IPv6Address(0xFFFFFFFFFFFFFFFFL, (0xFFFFFFFFFFFFFFFFL << (64 - remainingPrefixLength)));
+        }
+        else if (prefixLength == 0)
+        {
+            return new IPv6Address(0, 0);
         }
         else
         {
