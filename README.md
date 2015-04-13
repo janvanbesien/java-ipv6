@@ -131,3 +131,7 @@ Available via maven central.
 ## Prerequisites
 
 This library requires Java 6.
+
+## What's new
+
+See WhatsNew.
