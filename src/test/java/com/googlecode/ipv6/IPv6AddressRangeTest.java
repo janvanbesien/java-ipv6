@@ -239,6 +239,16 @@ public class IPv6AddressRangeTest
         checkSubnetsSameAsRange(testRange.toSubnets(), testRange);
     }
 
+    @Test
+    public void subnets_multicastAlreadyANetwork()
+    {
+        IPv6Network multicastNetwork = IPv6Network.fromString("ff00::/8");
+        IPv6AddressRange testRange = fromFirstAndLast(multicastNetwork.getFirst(), multicastNetwork.getLast());
+        IPv6Network network = IPv6Network.fromTwoAddresses(testRange.getFirst(), testRange.getLast());
+        assertEquals(testRange, network); // just to prove that the range is already a network
+        checkSubnetsSameAsRange(testRange.toSubnets(), testRange);
+    }
+
     /**
      * Check that a given list of subnets denotes exactly the same addresses as a given range.
      */

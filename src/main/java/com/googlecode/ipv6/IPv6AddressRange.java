@@ -290,7 +290,14 @@ public class IPv6AddressRange implements Comparable<IPv6AddressRange>, Iterable<
                 next = IPv6Network.fromAddressAndMask(base, IPv6NetworkMask.fromPrefixLength(128 - step));
 
                 // start the next loop after the end of the subnet just found
-                base = next.getLast().add(1);
+                if (next.getLast().compareTo(last) < 0)
+                {
+                    base = next.getLast().add(1);
+                }
+                else
+                {
+                    base = null; // to signal we reached the end
+                }
             }
             else
             {
@@ -304,7 +311,7 @@ public class IPv6AddressRange implements Comparable<IPv6AddressRange>, Iterable<
         public boolean hasNext()
         {
             // there is a next subnet as long as we didn't reach the end of the range
-            return (base.compareTo(last) <= 0);
+            return base != null && (base.compareTo(last) <= 0);
         }
 
         @Override
