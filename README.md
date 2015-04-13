@@ -1,9 +1,6 @@
-Java library to represent IPv6 addresses, networks, and related concepts
-========================================================================
+## Java IPv6 Library (v0.15)
 
 java-ipv6 is a Java library for IPv6 related concepts such as IPv6 addresses, network masks, address pools, etc.
-
-## Java IPv6 Library (v0.15)
 
 ### IPv6Address
 
