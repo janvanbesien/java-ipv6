@@ -1,4 +1,4 @@
-# v0.16 (in progress)
+# v0.16
 
   * Javadoc fix, see Issue #11
   * IPv6Address.setBit() has a bug, see Issue #14
