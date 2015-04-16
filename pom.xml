@@ -28,7 +28,7 @@
     <version>0.16-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>Java IPv6 Library</name>
-    <url>http://code.google.com/p/java-ipv6</url>
+    <url>https://github.com/janvanbesien/java-ipv6/</url>
 
     <licenses>
         <license>
@@ -39,9 +39,9 @@
     </licenses>
 
     <scm>
-        <url>https://java-ipv6.googlecode.com/svn/trunk</url>
-        <connection>scm:svn:https://java-ipv6.googlecode.com/svn/trunk/</connection>
-        <developerConnection>scm:svn:https://java-ipv6.googlecode.com/svn/trunk/</developerConnection>
+        <connection>scm:git:git@github.com:janvanbesien/java-ipv6.git</connection>
+        <url>scm:git:git@github.com:janvanbesien/java-ipv6.git</url>
+        <developerConnection>scm:git:git@github.com:janvanbesien/java-ipv6.git</developerConnection>
     </scm>
 
     <dependencies>
