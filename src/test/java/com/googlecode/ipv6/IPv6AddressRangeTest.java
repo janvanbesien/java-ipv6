@@ -16,6 +16,12 @@
 
 package com.googlecode.ipv6;
 
+import static com.googlecode.ipv6.IPv6Address.fromString;
+import static com.googlecode.ipv6.IPv6AddressRange.fromFirstAndLast;
+import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import junit.framework.Assert;
@@ -24,12 +30,6 @@ import org.junit.Test;
 import java.math.BigInteger;
 import java.util.Iterator;
 import java.util.List;
-
-import static com.googlecode.ipv6.IPv6Address.fromString;
-import static com.googlecode.ipv6.IPv6AddressRange.fromFirstAndLast;
-import static junit.framework.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 /**
  * @author Jan Van Besien
@@ -54,7 +54,7 @@ public class IPv6AddressRangeTest
         assertTrue(fromFirstAndLast(fromString("1:2:3:4:5:6:7:8"), fromString("9:10:11:12:13:14:15:16"))
                            .contains(fromString("1:2:3:4:5:6:7:8")));
         assertTrue(fromFirstAndLast(fromString("1:2:3:4:5:6:7:8"), fromString("9:10:11:12:13:14:15:16"))
-                           .contains(fromString("9:10:11:12:13:14:15:16")));
+                .contains(fromString("9:10:11:12:13:14:15:16")));
     }
 
     @Test
@@ -64,18 +64,18 @@ public class IPv6AddressRangeTest
         assertFalse(fromFirstAndLast(fromString("::1:2:3:4"), fromString("::5:6:7:8")).contains(fromString("::1:1:1:1")));
 
         assertFalse(fromFirstAndLast(fromString("1:2:3:4:5:6:7:8"), fromString("9:10:11:12:13:14:15:16"))
-                            .contains(fromString("10:10:10:10:10:10:10:10:")));
+                .contains(fromString("10:10:10:10:10:10:10:10:")));
         assertFalse(fromFirstAndLast(fromString("1:2:3:4:5:6:7:8"), fromString("9:10:11:12:13:14:15:16"))
-                            .contains(fromString("1:1:1:1:1:1:1:1")));
+                .contains(fromString("1:1:1:1:1:1:1:1")));
     }
 
     @Test
     public void containsRange()
     {
         assertTrue(fromFirstAndLast(fromString("::1:2:3:4"), fromString("::5:6:7:8"))
-                           .contains(fromFirstAndLast(fromString("::1:2:3:4"), fromString("::5:6:7:8"))));
+                .contains(fromFirstAndLast(fromString("::1:2:3:4"), fromString("::5:6:7:8"))));
         assertTrue(fromFirstAndLast(fromString("::1:2:3:4"), fromString("::5:6:7:8"))
-                           .contains(fromFirstAndLast(fromString("::4:4:4:4"), fromString("::5:5:5:5"))));
+                .contains(fromFirstAndLast(fromString("::4:4:4:4"), fromString("::5:5:5:5"))));
     }
 
     @Test
@@ -84,10 +84,10 @@ public class IPv6AddressRangeTest
         assertFalse(fromFirstAndLast(fromString("::1:2:3:4"), fromString("::5:6:7:8"))
                             .contains(fromFirstAndLast(fromString("::1:2:3:3"), fromString("::5:6:7:8"))));
         assertFalse(fromFirstAndLast(fromString("::1:2:3:4"), fromString("::5:6:7:8"))
-                            .contains(fromFirstAndLast(fromString("::1:2:3:4"), fromString("::5:6:7:9"))));
+                .contains(fromFirstAndLast(fromString("::1:2:3:4"), fromString("::5:6:7:9"))));
 
         assertFalse(fromFirstAndLast(fromString("::1:2:3:4"), fromString("::5:6:7:8"))
-                            .contains(fromFirstAndLast(fromString("::9:9:9:9"), fromString("::9:9:9:10"))));
+                .contains(fromFirstAndLast(fromString("::9:9:9:9"), fromString("::9:9:9:10"))));
     }
 
     @Test
@@ -226,7 +226,7 @@ public class IPv6AddressRangeTest
     public void subnets_largeTest1()
     {
         IPv6AddressRange testRange = fromFirstAndLast(fromString("a:b:c:d::"),
-                                                      fromString("a:b:c:e::"));
+                fromString("a:b:c:e::"));
         checkSubnetsSameAsRange(testRange.toSubnets(), testRange);
     }
 
@@ -244,6 +244,15 @@ public class IPv6AddressRangeTest
     {
         IPv6Network multicastNetwork = IPv6Network.fromString("ff00::/8");
         IPv6AddressRange testRange = fromFirstAndLast(multicastNetwork.getFirst(), multicastNetwork.getLast());
+        IPv6Network network = IPv6Network.fromTwoAddresses(testRange.getFirst(), testRange.getLast());
+        assertEquals(testRange, network); // just to prove that the range is already a network
+        checkSubnetsSameAsRange(testRange.toSubnets(), testRange);
+    }
+
+    @Test
+    public void subnets_fullRangeAlreadyANetwork()
+    {
+        IPv6AddressRange testRange = fromFirstAndLast(fromString("::"), fromString("ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff"));
         IPv6Network network = IPv6Network.fromTwoAddresses(testRange.getFirst(), testRange.getLast());
         assertEquals(testRange, network); // just to prove that the range is already a network
         checkSubnetsSameAsRange(testRange.toSubnets(), testRange);

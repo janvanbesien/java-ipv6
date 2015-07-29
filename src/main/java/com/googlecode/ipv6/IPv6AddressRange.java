@@ -17,7 +17,11 @@
 package com.googlecode.ipv6;
 
 import java.math.BigInteger;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.NoSuchElementException;
 
 /**
  * Immutable representation of a continuous range of IPv6 addresses (bounds included).
@@ -114,7 +118,7 @@ public class IPv6AddressRange implements Comparable<IPv6AddressRange>, Iterable<
             return Collections.singletonList(fromFirstAndLast(first, last.subtract(1)));
         else
             return Arrays.asList(fromFirstAndLast(first, address.subtract(1)),
-                                 fromFirstAndLast(address.add(1), last));
+                    fromFirstAndLast(address.add(1), last));
     }
 
     /**
@@ -157,7 +161,7 @@ public class IPv6AddressRange implements Comparable<IPv6AddressRange>, Iterable<
             return Collections.singletonList(fromFirstAndLast(first, network.getFirst().subtract(1)));
         else
             return Arrays.asList(fromFirstAndLast(first, network.getFirst().subtract(1)),
-                                 fromFirstAndLast(network.getLast().add(1), last));
+                    fromFirstAndLast(network.getLast().add(1), last));
 
     }
 
@@ -276,7 +280,7 @@ public class IPv6AddressRange implements Comparable<IPv6AddressRange>, Iterable<
                 step = 0;
 
                 // try setting the step-th bit until we reach a bit that is already set
-                while (!(base.setBit(step)).equals(base))
+                while (step < 128 && !(base.setBit(step)).equals(base))
                 {
                     // if the max address in this subnet is beyond the end of the range, we went too far
                     if ((base.maximumAddressWithNetworkMask(IPv6NetworkMask.fromPrefixLength(127 - step)).compareTo(last) > 0))
