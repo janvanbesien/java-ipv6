@@ -17,11 +17,17 @@
 package com.googlecode.ipv6;
 
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 /**
  * Immutable representation of an IPv6 address pool.
- * <p/>
+ * <p>
  * An IPv6 address pool is like an IPv6 address range in which some addresses are "free" and some are "allocated". Think "dhcp server".
  * Addresses are allocated in whole subnet blocks at once. These subnet blocks have a predefined prefix length for the whole allocatable
  * range.
@@ -45,6 +51,7 @@ public final class IPv6AddressPool
      *
      * @param range                range from within to allocate
      * @param allocationSubnetSize size of the subnets that will be allocated
+     * @return ipv6 address pool
      */
     public static IPv6AddressPool fromRangeAndSubnet(final IPv6AddressRange range,
                                                      final IPv6NetworkMask allocationSubnetSize)
@@ -147,9 +154,10 @@ public final class IPv6AddressPool
                     "can not allocate network which is not contained in the pool to allocate from [" + toAllocate + "]");
 
         if (!this.allocationSubnetSize.equals(toAllocate.getNetmask()))
-            throw new IllegalArgumentException("can not allocate network with prefix length /" + toAllocate.getNetmask().asPrefixLength() +
-                                                       " from a pool configured to hand out subnets with prefix length /"
-                                                       + allocationSubnetSize);
+            throw new IllegalArgumentException(
+                    "can not allocate network with prefix length /" + toAllocate.getNetmask().asPrefixLength() +
+                            " from a pool configured to hand out subnets with prefix length /"
+                            + allocationSubnetSize);
 
         // go find the range that contains the requested subnet
         final IPv6AddressRange rangeToAllocateFrom = findFreeRangeContaining(toAllocate);
@@ -244,7 +252,8 @@ public final class IPv6AddressPool
                 // merge two existing ranges
                 newFreeRanges.remove(freeRangeBeforeNetwork);
                 newFreeRanges.remove(freeRangeAfterNetwork);
-                newFreeRanges.add(IPv6AddressRange.fromFirstAndLast(freeRangeBeforeNetwork.getFirst(), freeRangeAfterNetwork.getLast()));
+                newFreeRanges.add(IPv6AddressRange
+                        .fromFirstAndLast(freeRangeBeforeNetwork.getFirst(), freeRangeAfterNetwork.getLast()));
             }
             else if (freeRangeBeforeNetwork != null)
             {
@@ -376,40 +385,6 @@ public final class IPv6AddressPool
             }
         };
     }
-
-//    /**
-//     * @return all networks (all with the same fixed prefix length) which are allocated in this pool
-//     */
-//    public Iterable<IPv6Network> allocatedNetworks()
-//    {
-//        return new Iterable<IPv6Network>()
-//        {
-//            @Override
-//            public Iterator<IPv6Network> iterator()
-//            {
-//                return new Iterator<IPv6Network>()
-//                {
-//                    @Override
-//                    public boolean hasNext()
-//                    {
-//                        throw new UnsupportedOperationException("TODO: implement hasNext");
-//                    }
-//
-//                    @Override
-//                    public IPv6Network next()
-//                    {
-//                        throw new UnsupportedOperationException("TODO: implement next");
-//                    }
-//
-//                    @Override
-//                    public void remove()
-//                    {
-//                        throw new UnsupportedOperationException("TODO: implement remove");
-//                    }
-//                };
-//            }
-//        };
-//    }
 
     @Override
     public boolean equals(Object o)

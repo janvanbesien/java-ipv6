@@ -182,7 +182,7 @@ public class IPv6AddressRange implements Comparable<IPv6AddressRange>, Iterable<
     /**
      * The natural order of {@link com.googlecode.ipv6.IPv6AddressRange}s orders them on increasing first addresses, and on increasing last
      * address if the first address would be equal.
-     * <p/>
+     * <p>
      * Note that the natural order does thus not compare sizes of ranges.
      *
      * @param that range to compare with

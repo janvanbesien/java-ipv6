@@ -71,6 +71,7 @@ public final class IPv6Network extends IPv6AddressRange
      *
      * @param one address one
      * @param two address two, should be bigger than address one
+     * @return ipv6 network
      */
     public static IPv6Network fromTwoAddresses(IPv6Address one, IPv6Address two)
     {
@@ -82,7 +83,7 @@ public final class IPv6Network extends IPv6AddressRange
      * Create an IPv6 network from its String representation. For example "1234:5678:abcd:0:0:0:0:0/64" or "2001::ff/128".
      *
      * @param string string representation
-     * @return IPv6 network
+     * @return ipv6 network
      */
     public static IPv6Network fromString(String string)
     {

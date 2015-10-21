@@ -16,6 +16,8 @@
 
 package com.googlecode.ipv6;
 
+import static com.googlecode.ipv6.IPv6AddressHelpers.prefixWithZeroBytes;
+
 import java.math.BigInteger;
 import java.net.Inet6Address;
 import java.net.InetAddress;
@@ -23,8 +25,6 @@ import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.nio.LongBuffer;
 import java.util.Arrays;
-
-import static com.googlecode.ipv6.IPv6AddressHelpers.prefixWithZeroBytes;
 
 /**
  * Immutable representation of an IPv6 address.
@@ -56,6 +56,7 @@ public final class IPv6Address implements Comparable<IPv6Address>
      *
      * @param highBits highest order bits
      * @param lowBits  lowest order bits
+     * @return ipv6 address constructed from two longs
      */
     public static IPv6Address fromLongs(long highBits, long lowBits)
     {
@@ -178,7 +179,7 @@ public final class IPv6Address implements Comparable<IPv6Address>
 
     /**
      * @return {@link java.math.BigInteger} representation. The magnitude of the {@link java.math.BigInteger} represents the IPv6 address
-     *         value. Or in other words, the {@link java.math.BigInteger} with value N defines the Nth possible IPv6 address.
+     * value. Or in other words, the {@link java.math.BigInteger} with value N defines the Nth possible IPv6 address.
      */
     public BigInteger toBigInteger()
     {
@@ -354,7 +355,8 @@ public final class IPv6Address implements Comparable<IPv6Address>
     {
         return this.highBits == 0 // 64 zero bits
                 && (this.lowBits & 0xFFFF000000000000L) == 0 // 16 more zero bits
-                && (this.lowBits & 0x0000FFFF00000000L) == 0x0000FFFF00000000L; // 16 one bits and the remainder is the IPv4 address
+                &&
+                (this.lowBits & 0x0000FFFF00000000L) == 0x0000FFFF00000000L; // 16 one bits and the remainder is the IPv4 address
     }
 
     /**
@@ -419,7 +421,8 @@ public final class IPv6Address implements Comparable<IPv6Address>
         int shortHandNotationPosition = shortHandNotationPositionAndLength[0];
         int shortHandNotationLength = shortHandNotationPositionAndLength[1];
 
-        boolean useShortHandNotation = shortHandNotationLength > 1; // RFC5952 recommends not to use shorthand notation for a single zero
+        boolean useShortHandNotation =
+                shortHandNotationLength > 1; // RFC5952 recommends not to use shorthand notation for a single zero
 
         for (int i = 0; i < strings.length; i++)
         {

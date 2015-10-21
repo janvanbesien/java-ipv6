@@ -50,6 +50,7 @@ public final class IPv6NetworkMask
      *
      * @param iPv6Address address to use as network mask
      * @throws IllegalArgumentException if the address is not a valid network mask
+     * @return ipv6 network mask
      */
     public static IPv6NetworkMask fromAddress(final IPv6Address iPv6Address)
     {
@@ -62,6 +63,7 @@ public final class IPv6NetworkMask
      *
      * @param prefixLength prefix length
      * @throws IllegalArgumentException if the prefix length is not in the interval ]0, 128]
+     * @return ipv6 network mask
      */
     public static IPv6NetworkMask fromPrefixLength(int prefixLength)
     {
