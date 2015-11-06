@@ -18,6 +18,7 @@ package com.googlecode.ipv6;
 
 import static com.googlecode.ipv6.BitSetHelpers.bitSetOf;
 
+import java.io.Serializable;
 import java.util.BitSet;
 
 /**
@@ -26,7 +27,7 @@ import java.util.BitSet;
  *
  * @author Jan Van Besien
  */
-public final class IPv6NetworkMask
+public final class IPv6NetworkMask implements Serializable
 {
     private final int prefixLength;
 
