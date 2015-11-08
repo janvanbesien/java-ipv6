@@ -1,3 +1,7 @@
+# v0.17-SNAPSHOT
+
+  * core types are now java.io.Serializable, see Issue #19
+  
 # v0.16
 
   * Javadoc fix, see Issue #11

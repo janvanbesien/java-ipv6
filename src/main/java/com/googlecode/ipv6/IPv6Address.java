@@ -18,6 +18,7 @@ package com.googlecode.ipv6;
 
 import static com.googlecode.ipv6.IPv6AddressHelpers.prefixWithZeroBytes;
 
+import java.io.Serializable;
 import java.math.BigInteger;
 import java.net.Inet6Address;
 import java.net.InetAddress;
@@ -31,7 +32,7 @@ import java.util.Arrays;
  *
  * @author Jan Van Besien
  */
-public final class IPv6Address implements Comparable<IPv6Address>
+public final class IPv6Address implements Comparable<IPv6Address>, Serializable
 {
     private static final int N_SHORTS = 8;
 

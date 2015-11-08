@@ -16,6 +16,7 @@
 
 package com.googlecode.ipv6;
 
+import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Collections;
@@ -28,7 +29,7 @@ import java.util.NoSuchElementException;
  *
  * @author Jan Van Besien
  */
-public class IPv6AddressRange implements Comparable<IPv6AddressRange>, Iterable<IPv6Address>
+public class IPv6AddressRange implements Comparable<IPv6AddressRange>, Iterable<IPv6Address>, Serializable
 {
     private final IPv6Address first;
 

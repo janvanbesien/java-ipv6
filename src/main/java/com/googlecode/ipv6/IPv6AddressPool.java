@@ -17,6 +17,7 @@
 package com.googlecode.ipv6;
 
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
@@ -34,7 +35,7 @@ import java.util.TreeSet;
  *
  * @author Jan Van Besien
  */
-public final class IPv6AddressPool
+public final class IPv6AddressPool implements Serializable
 {
     private final IPv6AddressRange underlyingRange;
 
