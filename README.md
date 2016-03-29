@@ -1,4 +1,6 @@
 ## Java IPv6 Library (v0.16)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.googlecode.java-ipv6/java-ipv6/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.googlecode.java-ipv6/java-ipv6)
+[![Javadoc](https://javadoc-emblem.rhcloud.com/doc/com.googlecode.java-ipv6/java-ipv6/badge.svg)](http://www.javadoc.io/doc/com.googlecode.java-ipv6/java-ipv6)
 
 java-ipv6 is a Java library for IPv6 related concepts such as IPv6 addresses, network masks, address pools, etc.
 
