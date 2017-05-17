@@ -56,9 +56,9 @@ public final class IPv6AddressHelpers
         for (int i = 0; i < longs.length; i++)
         {
             if (inHighRange(i))
-                high |= (longs[i] << ((longs.length - i - 1) * 16));
+                high |= (longs[i] << ((4 - i - 1) * 16));
             else
-                low |= (longs[i] << ((longs.length - i - 1) * 16));
+                low |= (longs[i] << ((4 - i - 1) * 16));
         }
 
         return new IPv6Address(high, low);
