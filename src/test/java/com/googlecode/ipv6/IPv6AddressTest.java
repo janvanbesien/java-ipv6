@@ -71,6 +71,7 @@ public class IPv6AddressTest
     public void parseSomeRealAddressesFromRFC5952()
     {
         assertEquals("::", fromString("::").toString());
+        assertEquals("::", fromString("::0").toString());
         assertEquals("1:2:3:4::", fromString("1:2:3:4::").toString());
         assertEquals("::1:2:3:4", fromString("::1:2:3:4").toString());
         assertEquals("1::2", fromString("1::2").toString());
@@ -99,6 +100,8 @@ public class IPv6AddressTest
     @Test
     public void toLongStringOnSomeRealAddresses()
     {
+        assertEquals("0000:0000:0000:0000:0000:0000:0000:0000", fromString("::").toLongString());
+        assertEquals("0000:0000:0000:0000:0000:0000:0000:0000", fromString("::0").toLongString());
         assertEquals("0000:0000:0000:0000:0000:0000:0000:0001", fromString("::1").toLongString());
         assertEquals("0000:0000:0000:0000:0000:0000:0001:0000", fromString("::1:0").toLongString());
         assertEquals("0001:0000:0000:0000:0001:0000:0000:0000", fromString("1::1:0:0:0").toLongString());

@@ -35,6 +35,7 @@ public class IPv6NetworkMaskTest
         assertEquals(IPv6NetworkMask.fromAddress(new IPv6Address(0xffffffffffffffffL, 0x0L)), new IPv6NetworkMask(64));
         assertEquals(IPv6NetworkMask.fromAddress(new IPv6Address(0xc000000000000000L, 0x0L)), new IPv6NetworkMask(2));
         assertEquals(IPv6NetworkMask.fromAddress(new IPv6Address(0x8000000000000000L, 0x0L)), new IPv6NetworkMask(1));
+        assertEquals(IPv6NetworkMask.fromAddress(new IPv6Address(0x0000000000000000L, 0x0L)), new IPv6NetworkMask(0));
     }
 
     @Test(expected = IllegalArgumentException.class)

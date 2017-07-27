@@ -64,6 +64,8 @@ public class IPv6NetworkTest
     @Test
     public void constructAndVerifyPrefixLength()
     {
+        assertEquals(0, IPv6Network.fromString("::/0").getNetmask().asPrefixLength());
+        assertEquals(0, IPv6Network.fromString("::0/0").getNetmask().asPrefixLength());
         assertEquals(1, IPv6Network.fromString("a:b:c::/1").getNetmask().asPrefixLength());
         assertEquals(63, IPv6Network.fromString("a:b:c::/63").getNetmask().asPrefixLength());
         assertEquals(64, IPv6Network.fromString("a:b:c::/64").getNetmask().asPrefixLength());
