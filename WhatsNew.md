@@ -1,4 +1,4 @@
-# v0.17-SNAPSHOT
+# v0.17
 
   * core types are now java.io.Serializable, see Issue #19
   

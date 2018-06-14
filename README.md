@@ -147,7 +147,7 @@ Available via maven central.
     <dependency>
         <groupId>com.googlecode.java-ipv6</groupId>
         <artifactId>java-ipv6</artifactId>
-        <version>0.16</version>
+        <version>0.17</version>
     </dependency>
 
 ## Prerequisites
